@@ -9,6 +9,12 @@ weasyprint
 # Database
 psycopg2-binary==2.9.10
 
+# Authentication & Security
+bcrypt==4.1.2
+PyJWT==2.8.0
+email-validator==2.1.0
+python-dotenv==1.0.1
+
 # MQTT
 paho-mqtt
 
