@@ -896,18 +896,22 @@
                     const response = await fetch(`${NODE_RED_API_BASE}/api/devices/`);
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const devicesRaw = await response.json();
-                    const devicesFiltered = devicesRaw.filter(device => device.value !== 'environment');
+                    // Filter out environment device and map to correct format
+                    const devicesFiltered = devicesRaw
+                        .filter(device => device.device_id !== 'environment')
+                        .sort((a, b) => a.friendly_name.localeCompare(b.friendly_name));
+                    
                     console.log("Filtered device list:", devicesFiltered);
-                    console.log("Device select element:", deviceSelect);
                     deviceSelect.innerHTML = '<option value="">-- Select a Device --</option>';
+                    
                     devicesFiltered.forEach(device => {
                         const option = document.createElement('option');
-                        option.value = device.value;
-                        option.textContent = device.label;
+                        option.value = device.device_id;
+                        option.textContent = device.friendly_name;
                         deviceSelect.appendChild(option);
-                        console.log("Added option:", device.label, "with value:", device.value);
                     });
-                    console.log("Total options in select:", deviceSelect.options.length);
+                    
+                    console.log(`✓ Loaded ${devicesFiltered.length} devices`);
                 } catch (error) {
                     console.error("Error fetching device list:", error);
                     deviceSelect.innerHTML = '<option value="">Error loading devices</option>';
