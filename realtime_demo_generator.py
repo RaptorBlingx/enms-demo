@@ -392,6 +392,9 @@ def update_all_devices(conn):
             # Get the job_id of the inserted job
             inserted_job_id = cursor.fetchone()[0]
             
+            # IMPORTANT: Commit BEFORE triggering PDF generation so the job is visible to the API
+            conn.commit()
+            
             # Trigger PDF generation asynchronously via API call (through nginx proxy)
             try:
                 import requests
@@ -406,8 +409,6 @@ def update_all_devices(conn):
                     print(f"  ✗ PDF generation failed for job {inserted_job_id}: {response.text}")
             except Exception as e:
                 print(f"  ✗ Could not trigger PDF generation for job {inserted_job_id}: {e}")
-        
-        conn.commit()
         
         # Print summary
         printing_count = sum(1 for s in device_states.values() if s.state_text == 'Printing')
