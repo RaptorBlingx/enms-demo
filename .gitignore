@@ -198,3 +198,12 @@ certificates/
 # ============================================================================
 grafana/data/
 grafana_data/
+
+# Large model files - should not be in git
+backend/models/*.joblib
+backend/models/*.pkl
+backend/models/*.h5
+
+# Large database dumps
+backend/db_init/*.sql.gz
+backend/db_init/*.sql.bz2
