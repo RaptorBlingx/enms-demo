@@ -10,6 +10,8 @@ import random
 import time
 import sys
 import signal
+import threading
+from queue import Queue
 
 # Database connection
 DB_HOST = "localhost"
@@ -18,23 +20,22 @@ DB_NAME = "reg_ml_demo"
 DB_USER = "reg_ml_demo"
 DB_PASS = "raptorblingx_demo"
 
-# Update interval (seconds) - FAST for demo presentation
-UPDATE_INTERVAL = 5  # Update every 5 seconds for immediate responsiveness
+# Update interval (seconds) - Balanced for demo and performance
+UPDATE_INTERVAL = 10  # Update every 10 seconds for better resource management
 
-# ALL devices - Updated to include all 32 printers (excluding environment sensor)
+# OPTIMIZED: Reduced to 10 diverse printers for better CPU/resource efficiency
+# This reduces PDF generation load while maintaining variety in demo
 DEMO_DEVICES = [
-    'anycubic_kobra2_1', 'anycubic_kobra_max_1', 'anycubic_vyper_1',
-    'artillery_genius_pro_1', 'artillery_sidewinder_x2_1', 'artillery_sidewinder_x4_plus_1',
-    'bambu_p1p_1', 'bambu_p1s_1', 'bambu_x1_carbon_1',
-    'creality_cr10_smart_pro_1', 'creality_ender3_v2_1', 'creality_ender5_s1_1', 'creality_k1_max_1',
-    'elegoo_neptune3_pro_1', 'elegoo_neptune4_pro_1',
-    'flashforge_adventurer_5m_1', 'flsun_qqs_pro_1',
-    'kingroon_kp3s_pro_1',
-    'prusa_mini_plus_1', 'prusa_mini_plus_2', 'prusa_mk3s_plus_1', 'prusa_mk4_1', 'prusa_mk4_2', 'prusa_mk4_3',
-    'prusa_xl_1', 'prusa_xl_2',
-    'qidi_xmax3_1',
-    'sovol_sv06_plus_1', 'sovol_sv07_1',
-    'voron_24_1', 'voron_switchwire_1', 'voron_trident_1'
+    'bambu_x1_carbon_1',        # High-end modern printer
+    'creality_ender3_v2_1',     # Popular budget printer
+    'prusa_mini_plus_1',        # Compact reliable printer
+    'prusa_mk4_1',              # Industry standard
+    'prusa_mk4_2',              # Second MK4 for comparison
+    'prusa_xl_1',               # Large format printer
+    'voron_24_1',               # DIY community favorite
+    'bambu_p1s_1',              # Mid-range modern
+    'artillery_sidewinder_x2_1', # Large budget option
+    'elegoo_neptune4_pro_1'     # Budget friendly modern
 ]
 
 MATERIALS = ['PLA', 'PETG', 'ABS', 'TPU', 'ASA']
@@ -395,20 +396,8 @@ def update_all_devices(conn):
             # IMPORTANT: Commit BEFORE triggering PDF generation so the job is visible to the API
             conn.commit()
             
-            # Trigger PDF generation asynchronously via API call (through nginx proxy)
-            try:
-                import requests
-                response = requests.post(
-                    'http://localhost:8090/api/generate_dpp_pdf',
-                    json={'job_id': inserted_job_id},
-                    timeout=5
-                )
-                if response.status_code == 200:
-                    print(f"  ✓ Generated PDF for job {inserted_job_id}")
-                else:
-                    print(f"  ✗ PDF generation failed for job {inserted_job_id}: {response.text}")
-            except Exception as e:
-                print(f"  ✗ Could not trigger PDF generation for job {inserted_job_id}: {e}")
+            # Queue PDF generation in background thread to avoid blocking
+            pdf_queue.put(inserted_job_id)
         
         # Print summary
         printing_count = sum(1 for s in device_states.values() if s.state_text == 'Printing')
@@ -421,13 +410,47 @@ def update_all_devices(conn):
         print(f"Error updating devices: {e}")
         conn.rollback()
 
+# PDF generation queue and worker
+pdf_queue = Queue()
+
+def pdf_worker():
+    """Background worker to process PDF generation requests with rate limiting"""
+    import requests
+    
+    while True:
+        try:
+            job_id = pdf_queue.get(timeout=1)
+            if job_id is None:  # Poison pill to stop the worker
+                break
+            
+            # Rate limit: Wait a bit between PDF generations to reduce CPU spikes
+            time.sleep(2)
+            
+            try:
+                response = requests.post(
+                    'http://localhost:8090/api/generate_dpp_pdf',
+                    json={'job_id': job_id},
+                    timeout=10
+                )
+                if response.status_code == 200:
+                    print(f"  ✓ [PDF Worker] Generated PDF for job {job_id}")
+                else:
+                    print(f"  ✗ [PDF Worker] PDF generation failed for job {job_id}: {response.text}")
+            except Exception as e:
+                print(f"  ✗ [PDF Worker] Could not generate PDF for job {job_id}: {e}")
+            
+            pdf_queue.task_done()
+        except:
+            continue  # Timeout, just continue waiting
+
 def main():
     print("=" * 70)
-    print("DEMO Real-Time Data Generator")
+    print("DEMO Real-Time Data Generator (Optimized)")
     print("=" * 70)
     print(f"Database: {DB_NAME}@localhost:{DB_PORT}")
     print(f"Update interval: {UPDATE_INTERVAL} seconds")
-    print(f"Devices: {len(DEMO_DEVICES)}")
+    print(f"Active devices: {len(DEMO_DEVICES)} (optimized for performance)")
+    print("PDF Generation: Background worker with rate limiting")
     print("=" * 70)
     
     # Setup signal handler for graceful shutdown
@@ -454,6 +477,12 @@ def main():
         print("Initializing device states...")
         initialize_device_states()
         print()
+        
+        # Start PDF worker thread
+        print("Starting PDF generation worker...")
+        pdf_thread = threading.Thread(target=pdf_worker, daemon=True)
+        pdf_thread.start()
+        print("✓ PDF worker started\n")
         
         # Main loop
         iteration = 0
