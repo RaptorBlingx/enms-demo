@@ -392,13 +392,13 @@ def update_all_devices(conn):
             # Get the job_id of the inserted job
             inserted_job_id = cursor.fetchone()[0]
             
-            # Trigger PDF generation asynchronously via API call
+            # Trigger PDF generation asynchronously via API call (through nginx proxy)
             try:
                 import requests
                 response = requests.post(
-                    'http://localhost:5000/api/generate_dpp_pdf',
+                    'http://localhost:8090/api/generate_dpp_pdf',
                     json={'job_id': inserted_job_id},
-                    timeout=2
+                    timeout=5
                 )
                 if response.status_code == 200:
                     print(f"  ✓ Generated PDF for job {inserted_job_id}")
