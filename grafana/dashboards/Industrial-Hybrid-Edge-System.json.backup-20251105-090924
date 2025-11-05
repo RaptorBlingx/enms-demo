@@ -1567,7 +1567,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  timestamp AS time,\r\n  temperature_c AS temperature,\r\n  humidity_pct AS humidity\r\nFROM dht22_data\r\nWHERE device_id = 'ESP32_SensorHub_Raptor'\r\n  AND $__timeFilter(timestamp)\r\nORDER BY time DESC",
+          "rawSql": "SELECT\r\n  forecast_time AS time,\r\n  temperature,\r\n  humidity\r\nFROM weather_forecast\r\nWHERE location = 'Hamburg'\r\nORDER BY time \r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1780,7 +1780,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n    temperature_c AS temperature\r\nFROM dht22_data \r\nWHERE device_id = 'ESP32_SensorHub_Raptor'\r\nORDER BY timestamp DESC \r\nLIMIT 1;",
+          "rawSql": "SELECT \r\n    temperature \r\nFROM temperature_readings \r\nORDER BY timestamp DESC \r\nLIMIT 1;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1801,8 +1801,7 @@
           }
         }
       ],
-      "title": "Current Temperature",
-      "description": "Real-time temperature reading from DHT22 sensor. Optimal printing temperature range: 20-25\u00b0C for most materials.",
+      "title": "Panel Title",
       "type": "gauge"
     },
     {
@@ -2237,7 +2236,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  timestamp AS time,\r\n  temperature_c AS \"Temperature (\u00b0C)\",\r\n  humidity_pct AS \"Humidity (%)\"\r\nFROM dht22_data\r\nWHERE device_id = 'ESP32_SensorHub_Raptor'\r\n  AND $__timeFilter(timestamp)\r\nORDER BY timestamp DESC\r\nLIMIT 40",
+          "rawSql": "SELECT\r\n  timestamp,\r\n  rain_3h,\r\n  snow_3h\r\nFROM weather_forecast\r\nWHERE location = 'Hamburg'\r\nORDER BY timestamp\r\nLIMIT 40",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2258,8 +2257,7 @@
           }
         }
       ],
-      "title": "Environmental Readings History",
-      "description": "Historical temperature and humidity readings from DHT22 sensor. Shows recent environmental conditions affecting print quality and equipment operation.",
+      "title": "Panel Title",
       "type": "table"
     },
     {
@@ -2347,7 +2345,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  timestamp AS time,\r\n  temperature_c AS \"Temperature (\u00b0C)\",\r\n  humidity_pct AS \"Humidity (%)\"\r\nFROM dht22_data\r\nWHERE device_id = 'ESP32_SensorHub_Raptor'\r\n  AND $__timeFilter(timestamp)\r\nORDER BY time",
+          "rawSql": "SELECT\r\n  forecast_time AS time,\r\n  rain_3h AS rain,\r\n  snow_3h AS snow\r\nFROM weather_forecast\r\nWHERE location = 'Hamburg'\r\nORDER BY time",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2368,8 +2366,7 @@
           }
         }
       ],
-      "title": "Temperature vs Humidity Comparison",
-      "description": "Bar chart comparing temperature and humidity levels over time. Ideal environmental conditions: 20-25\u00b0C temperature, 40-60% humidity for optimal print quality.",
+      "title": "Compare rain and snow amounts at different times",
       "type": "barchart"
     },
     {
@@ -2377,6 +2374,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "aei784ojzbrpca"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2473,7 +2471,7 @@
           },
           "parser": "backend",
           "rawQuery": true,
-          "rawSql": "\nSELECT\n  humidity_pct as value\nFROM dht22_data\nWHERE device_id = 'ESP32_SensorHub_Raptor'\nORDER BY timestamp DESC\nLIMIT 1\n",
+          "rawSql": "\nSELECT\n  humidity as value\nFROM weather_readings\nWHERE location = 'Hamburg'\nORDER BY timestamp DESC\nLIMIT 1\n",
           "refId": "A",
           "root_selector": "",
           "source": "url",
@@ -2493,11 +2491,16 @@
               }
             ],
             "limit": 50
+          },
+          "type": "json",
+          "url": "https://api.openweathermap.org/data/2.5/weather?q=Hamburg&appid=cbadac3aa12b61330e3da56a3d5bc681&units=metric",
+          "url_options": {
+            "data": "",
+            "method": "GET"
           }
         }
       ],
-      "title": "Current Humidity Level",
-      "description": "Real-time humidity measurement from DHT22 sensor. Optimal range: 40-60% for preventing warping and ensuring good layer adhesion.",
+      "title": "Humidity Hamburg",
       "type": "gauge"
     },
     {
@@ -2558,7 +2561,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  MAX(temperature_c) AS \"Max Temp (\u00b0C)\",\r\n  MIN(temperature_c) AS \"Min Temp (\u00b0C)\"\r\nFROM dht22_data\r\nWHERE device_id = 'ESP32_SensorHub_Raptor'\r\n  AND $__timeFilter(timestamp)",
+          "rawSql": "SELECT\r\n  MAX(rain_3h) AS max_rain,\r\n  MAX(snow_3h) AS max_snow\r\nFROM weather_forecast\r\nWHERE location = 'Hamburg'",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2579,8 +2582,7 @@
           }
         }
       ],
-      "title": "Temperature Range Statistics",
-      "description": "Shows maximum and minimum temperature values within the selected time range. Helps identify temperature fluctuations that may affect print quality.",
+      "title": "Panel Title",
       "type": "gauge"
     },
     {
@@ -2645,7 +2647,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  timestamp,\r\n  device_id AS \"Device\",\r\n  temperature_c AS \"Temperature (\u00b0C)\",\r\n  humidity_pct AS \"Humidity (%)\",\r\n  CASE \r\n    WHEN temperature_c BETWEEN 20 AND 25 AND humidity_pct BETWEEN 40 AND 60 THEN 'Optimal'\r\n    WHEN temperature_c < 18 OR temperature_c > 28 THEN 'Temperature Alert'\r\n    WHEN humidity_pct < 30 OR humidity_pct > 70 THEN 'Humidity Alert'\r\n    ELSE 'Acceptable'\r\n  END AS \"Conditions\"\r\nFROM dht22_data\r\nWHERE device_id = 'ESP32_SensorHub_Raptor'\r\n  AND $__timeFilter(timestamp)\r\nORDER BY timestamp DESC\r\nLIMIT 40",
+          "rawSql": "SELECT\r\n  timestamp,\r\n  weather,\r\n  description,\r\n  temperature,\r\n  humidity,\r\n  pressure,\r\n  wind_speed,\r\n  wind_direction,\r\n  rain_3h,\r\n  snow_3h\r\nFROM weather_forecast\r\nWHERE location = 'Hamburg'\r\nORDER BY timestamp DESC\r\nLIMIT 40",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2666,8 +2668,7 @@
           }
         }
       ],
-      "title": "Environmental Conditions Analysis",
-      "description": "Detailed environmental readings with condition assessment. Tracks temperature and humidity with automated alerts for non-optimal printing conditions.",
+      "title": "Forecast",
       "type": "table"
     },
     {
@@ -2758,7 +2759,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  timestamp AS time,\r\n  temperature_c AS \"Temperature (\u00b0C)\",\r\n  humidity_pct AS \"Humidity (%)\",\r\n  AVG(temperature_c) OVER (ORDER BY timestamp ROWS BETWEEN 10 PRECEDING AND CURRENT ROW) AS \"Temp Moving Avg\",\r\n  AVG(humidity_pct) OVER (ORDER BY timestamp ROWS BETWEEN 10 PRECEDING AND CURRENT ROW) AS \"Humidity Moving Avg\"\r\nFROM dht22_data\r\nWHERE device_id = 'ESP32_SensorHub_Raptor'\r\n  AND $__timeFilter(timestamp)\r\nORDER BY time",
+          "rawSql": "SELECT\r\n  forecast_time AS time,\r\n  rain_3h AS rain,\r\n  snow_3h AS snow\r\nFROM weather_forecast\r\nWHERE location = 'Hamburg'\r\nORDER BY time",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2779,8 +2780,7 @@
           }
         }
       ],
-      "title": "Environmental Trends Over Time",
-      "description": "Time series visualization of temperature and humidity with moving averages. Smoothed trends help identify long-term environmental patterns affecting print operations.",
+      "title": "precipitation over time",
       "type": "timeseries"
     }
   ],
