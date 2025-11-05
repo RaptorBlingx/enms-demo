@@ -45,26 +45,46 @@ def get_db_connection():
     )
 
 # --- Helper Functions for Plant Image (Docker paths) ---
-PLANT_THRESHOLDS = [0.01, 0.018, 0.021, 0.022, 0.024, 0.027, 0.030, 0.04, 0.045, 0.05, 0.06, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.5, 3.0]
+# MUST match dpp_simulator.py exactly for consistent plant backgrounds
+PLANT_THRESHOLDS = [0.003, 0.006, 0.007, 0.0073, 0.008, 0.009, 0.01, 0.0133, 0.015, 0.0167, 0.02, 0.333, 0.4, 0.467, 0.533, 0.6, 0.667, 0.833, 1.0]
 
 def get_plant_stage(kwh):
-    kwh_val = kwh if isinstance(kwh, (int, float)) else float('-inf')
-    if kwh_val < PLANT_THRESHOLDS[0]: return 1
+    """Calculate plant growth stage with cycling logic - MUST match dpp_simulator.py"""
+    CYCLE_THRESHOLD = PLANT_THRESHOLDS[-1]  # 1.0
+    kwh_val = kwh if isinstance(kwh, (int, float)) else 0.0
+    
+    # Calculate effective kWh for current cycle using modulo
+    effective_kwh = kwh_val % CYCLE_THRESHOLD
+    
+    if effective_kwh < PLANT_THRESHOLDS[0]: 
+        return 1
     for i in range(len(PLANT_THRESHOLDS) - 1, -1, -1):
-        if kwh_val >= PLANT_THRESHOLDS[i]: return min(i + 2, 19)
+        if effective_kwh >= PLANT_THRESHOLDS[i]: 
+            return min(i + 2, 19)
     return 1
 
 def get_plant_image_src(plant_type, kwh_for_plant):
-    # This path is where the artistic-resources will be mounted inside this container
+    """Generate plant image path - MUST match frontend getPlantImageSrc() logic"""
     ART_ROOT = "/app/artistic-resources"
     plant_type_clean = (plant_type or 'generic_plant').lower()
     stage = get_plant_stage(kwh_for_plant)
-    max_stages = 21
-    plant_folder = "generic_plant"
+    
+    # Match frontend plant type handling exactly
     if plant_type_clean == 'corn':
         max_stages = 8
         plant_folder = "corn"
-    stage = min(stage, max_stages)
+    elif plant_type_clean == 'sunflower':
+        max_stages = 7
+        plant_folder = "sunflower"
+    elif plant_type_clean == 'tomato':
+        max_stages = 12
+        plant_folder = "tomato"
+    else:  # generic_plant or potato
+        max_stages = 21
+        plant_folder = "generic_plant"
+    
+    # Cap stage to max available for this plant type
+    stage = max(1, min(stage, max_stages))
     stage_padded = str(stage).zfill(2)
     image_path = os.path.join(ART_ROOT, "plants", plant_folder, f"{plant_folder}_stage_{stage_padded}.png")
     return f"file://{image_path}"
@@ -80,7 +100,7 @@ def generate_pdf_for_job(job_id):
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        # The SQL query now also fetches the material
+        # The SQL query now also fetches the material and existing dpp_pdf_url
         query = """
             SELECT pj.*, d.friendly_name, d.device_model, d.printer_size_category,
                    ps.nozzle_temp_actual, ps.bed_temp_actual, ps.material
@@ -124,13 +144,18 @@ def generate_pdf_for_job(job_id):
 
         # ===== END OF FIX =====
 
-        numeric_fields = ['session_energy_wh', 'filament_used_g', 'duration_seconds', 'nozzle_temp_actual', 'bed_temp_actual']
+        numeric_fields = ['session_energy_wh', 'kwh_consumed', 'filament_used_g', 'duration_seconds', 'nozzle_temp_actual', 'bed_temp_actual']
         for field in numeric_fields:
             if field in job_data_dict and job_data_dict[field] is not None:
                 job_data_dict[field] = float(job_data_dict[field])
         
-        session_energy = job_data_dict.get('session_energy_wh', 0) or 0
-        kwh_consumed = session_energy / 1000.0 if session_energy else 0
+        # Get energy for plant stage calculation - prefer kwh_consumed (already in kWh)
+        if job_data_dict.get('kwh_consumed'):
+            kwh_consumed = float(job_data_dict['kwh_consumed'])
+        elif job_data_dict.get('session_energy_wh'):
+            kwh_consumed = float(job_data_dict['session_energy_wh']) / 1000.0
+        else:
+            kwh_consumed = 0
         
         plant_type_for_job = job_data_dict.get('plant_type', 'generic_plant')
         file_path_plant_image_url = get_plant_image_src(plant_type_for_job, kwh_consumed)
@@ -148,15 +173,26 @@ def generate_pdf_for_job(job_id):
             thumbnail_url=file_path_thumbnail_url
         )
 
-        pdf_filename = f'dpp_job_{job_id}.pdf'
+        # Use existing PDF URL from database if it exists, otherwise create new one
+        existing_pdf_url = job_data_dict.get('dpp_pdf_url')
+        if existing_pdf_url and existing_pdf_url.startswith('/dpp_reports/'):
+            # Extract filename from existing URL
+            pdf_filename = existing_pdf_url.split('/')[-1]
+        else:
+            # Fallback to job_id based naming
+            pdf_filename = f'dpp_job_{job_id}.pdf'
+            
         pdf_dir = '/app/generated_pdfs' 
         pdf_path = os.path.join(pdf_dir, pdf_filename)
         HTML(string=rendered_html).write_pdf(pdf_path)
 
         pdf_url = f'/dpp_reports/{pdf_filename}'
-        update_query = "UPDATE print_jobs SET dpp_pdf_url = %s WHERE job_id = %s;"
-        cur.execute(update_query, (pdf_url, job_id))
-        conn.commit()
+        
+        # Only update if URL was not set or changed
+        if not existing_pdf_url or existing_pdf_url != pdf_url:
+            update_query = "UPDATE print_jobs SET dpp_pdf_url = %s WHERE job_id = %s;"
+            cur.execute(update_query, (pdf_url, job_id))
+            conn.commit()
 
         return {"success": True, "pdf_url": pdf_url}
 

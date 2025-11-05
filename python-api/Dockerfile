@@ -40,4 +40,5 @@ EXPOSE 5000
 
 # 9. Define the command to run when the container starts.
 #CMD ["python", "app.py"]
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Use --log-level info and --access-logfile to see all output including print statements
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", "--log-level", "info", "--capture-output", "app:app"]

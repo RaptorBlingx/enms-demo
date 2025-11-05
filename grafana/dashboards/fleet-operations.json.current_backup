@@ -858,7 +858,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  filename       AS \"File\",\r\n  end_time       AS \"Completed At\",\r\n  to_char(make_interval(secs => duration_seconds), 'HH24:MI:SS') AS \"Duration\",\r\n  (session_energy_wh / 1000.0)::numeric(10,3) AS \"Energy (kWh)\",\r\n  filament_used_g AS \"Filament (g)\"\r\nFROM print_jobs\r\nWHERE\r\n  device_id = $device_id\r\n  AND status = 'completed'\r\nORDER BY\r\n  \"Completed At\" DESC;\r\n",
+          "rawSql": "SELECT\r\n  filename       AS \"File\",\r\n  end_time       AS \"Completed At\",\r\n  to_char(make_interval(secs => duration_seconds), 'HH24:MI:SS') AS \"Duration\",\r\n  (session_energy_wh / 1000.0)::numeric(10,3) AS \"Energy (kWh)\",\r\n  filament_used_g AS \"Filament (g)\"\r\nFROM print_jobs\r\nWHERE\r\n  device_id = $device_id\r\n  AND status = 'done'\r\nORDER BY\r\n  \"Completed At\" DESC;\r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -922,7 +922,7 @@
         "label": "Machine",
         "name": "device_id",
         "options": [],
-        "query": "SELECT\n  friendly_name AS \"__text\",\n  device_id AS \"__value\"\nFROM devices\nWHERE\n  location = '$factory'\n  AND device_id != 'environment'\nORDER BY friendly_name;",
+        "query": "SELECT\n  friendly_name AS \"__text\",\n  device_id AS \"__value\"\nFROM devices\nWHERE\n  -- This condition links this variable to the $factory variable\n  location = '$factory'\n  AND device_id != 'environment'\nORDER BY friendly_name;",
         "refresh": 1,
         "regex": "",
         "sort": 1,

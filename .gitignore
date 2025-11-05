@@ -1,32 +1,200 @@
-# Ignore Python cache files
+# ============================================================================
+# ENMS Demo - Professional .gitignore
+# ============================================================================
+
+# ============================================================================
+# Python
+# ============================================================================
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+*.egg
 
-# Large SQL 
-*.sql.gz
-*-all-data.sql
+# Virtual environments
+venv/
+env/
+ENV/
+myenv/
+pyenv/
 
-# Ignore Node-RED user-specific files and credentials
+# ============================================================================
+# Node.js / Node-RED
+# ============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+
+# Node-RED specific
 node-red/.npm/_logs/
-node-red/.flows_docker_cred.json.backup
-node-red/.npm/_logs/
-node-red/.flows_docker_cred.json.backup
 node-red/*_cred.json
+node-red/.flows_docker_cred.json.backup
 node-red/config.users.json
 node-red/.config.json
-
-# Ignore temporary backup files
-*.bak
-
-#.env file
-.env
-
-
-# Ignore local SQL init data
-backend/db_init/02_data.sql
-
-# Ignore Node-RED backup flows
 node-red/flows.json.backup
 node-red/flows_docker.json.bak
 node-red/.flows_docker.json.backup
-backend/models/*.joblib
+
+# ============================================================================
+# Environment & Configuration
+# ============================================================================
+.env
+.env.local
+.env.*.local
+*.local
+
+# ============================================================================
+# Docker
+# ============================================================================
+docker-compose.override.yml
+
+# ============================================================================
+# Database
+# ============================================================================
+*.sql.gz
+*-all-data.sql
+backend/db_init/02_data.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Database dumps and backups
+*.dump
+*_backup*.sql
+ml_predictions_backup*.sql
+migrate_*.sql
+
+# ============================================================================
+# Logs
+# ============================================================================
+*.log
+logs/
+*.log.*
+nohup.out
+
+# Application-specific logs
+realtime_demo_generator.log
+realtime_iot_generator.log
+
+# ============================================================================
+# IDE & Editor
+# ============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# ============================================================================
+# Temporary & Backup Files
+# ============================================================================
+*.bak
+*.backup
+*.tmp
+*.temp
+*~
+.*.swp
+.*.swo
+
+# Backup JSON files
+*.json.backup
+*.json.backup_*
+*.json.bak
+
+# ============================================================================
+# Generated Files
+# ============================================================================
+# Generated PDFs (stored in Docker volumes)
+generated_pdfs/
+
+# Uploaded GCode previews
+gcode_previews/
+
+# ============================================================================
+# Documentation (Work in Progress)
+# ============================================================================
+# Keep main documentation, ignore drafts
+*_DRAFT.md
+*_WIP.md
+*_OLD.md
+TODO.md
+NOTES.md
+
+# Documentation that shouldn't be in the public repo
+AUTH_SETUP_COMPLETE.md
+CLOUDFLARE_CONFIG_GUIDE.md
+CURRENT_STATUS.md
+DASHBOARD_FIXES*.md
+DEMO_COMPLETE.md
+DEMO_CONFIGURATION.md
+EMAIL_SETUP_GUIDE.md
+ENHANCEMENTS_SUMMARY.md
+GRAFANA_IMPORT_GUIDE.md
+IOT_DASHBOARD_COMPLETE.md
+POWER_PANELS_FIXED.md
+PRODUCTION_CONFIG_UPDATE.md
+QUICK_REFERENCE.md
+SENSOR_EXPLORER_FIXED.md
+TIMESERIES_FIX.md
+TOOLTIP_*.md
+
+# ============================================================================
+# SQL Migration Scripts (Development)
+# ============================================================================
+# Keep these out of main repo - use proper migration system
+*_cleanup_*.sql
+update_*.sql
+final_*.sql
+
+# ============================================================================
+# Test Files
+# ============================================================================
+test_*.py
+test_*.sh
+*_test.py
+*_test.sh
+
+# ============================================================================
+# Utility Scripts (Development)
+# ============================================================================
+backfill_*.py
+regenerate_*.sh
+
+# ============================================================================
+# System Files
+# ============================================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================================================
+# TLS/SSL Certificates (NEVER commit these!)
+# ============================================================================
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+certs/
+certificates/
+
+# ============================================================================
+# Grafana
+# ============================================================================
+grafana/data/
+grafana_data/

@@ -22,6 +22,9 @@
 
     <!-- Using Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tooltip Component -->
+    <link rel="stylesheet" href="/components/tooltip.css">
 
 
     <style>
@@ -645,13 +648,12 @@
 
 
         /* FINAL look for the little preview window */
+        /* DISABLED: 3D canvas removed as requested */
         .bed-scene-wrapper {
-            border: none !important;
-            /* no grey frame      */
-            border-radius: var(--radius-lg);
-            /* softer corners      */
-            box-shadow: var(--shadow-sm);
-            /* subtle, uniform     */
+            display: none !important;
+            /* border: none !important; */
+            /* border-radius: var(--radius-lg); */
+            /* box-shadow: var(--shadow-sm); */
             background: transparent !important;
             /* keep white box bg   */
         }
@@ -991,7 +993,13 @@
 
 <body>
     <div class="main-container">
-        <h1>Printer Fleet Status & DPP</h1>
+        <h1>
+            Printer Fleet Status & DPP
+            <span class="tooltip-wrapper tooltip-inline">
+                <i class="fa-solid fa-circle-info tooltip-icon"></i>
+                <span class="tooltip-content">Monitor printer fleet and generate Digital Product Passports. View real-time status, energy consumption, and sustainability metrics for circular economy compliance.</span>
+            </span>
+        </h1>
         <!-- In HTML for loadingIndicator -->
         <div id="loadingIndicator"
             style="position: fixed; top: 60px; /* Adjust based on any header */ left: 50%; transform: translateX(-50%); padding: 0.5rem 1rem; background-color: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary); border-radius: var(--radius-md); box-shadow: var(--shadow-md); z-index: 1000; display: none; font-size: 0.85rem;">
@@ -1731,29 +1739,10 @@
                         jobExtraDetailsDiv.querySelector('.job-dimensions .value').textContent = dimensionsDisplay;
                     }
 
-                    // --- Handle 3D Preview Canvas (using .bed-scene-wrapper) ---
-                    const bedWrapper = cardElement.querySelector('.bed-scene-wrapper');
-                    let canvas = bedWrapper ? bedWrapper.querySelector('.card-3d-preview') : null;
-
-                    if (printer.gcodePath) {
-                        if (!canvas && bedWrapper) {
-                            canvas = document.createElement('canvas');
-                            canvas.className = 'card-3d-preview';
-                            bedWrapper.appendChild(canvas);
-                        }
-                        if (canvas) {
-                            canvas.width = printer.bedWidth + 40;
-                            canvas.height = 200;
-                            canvas.dataset.bedWidth = printer.bedWidth;
-                            canvas.dataset.bedDepth = printer.bedDepth;
-                            canvas.dataset.apiKey = printer.gcode_preview_api_key;
-                            canvas.dataset.gcodeUrl = printer.gcodePath;
-                            // No need for left/top anymore! Flexbox centers it.
-                            init3DPreview(canvas);
-                        }
-                    } else if (canvas) {
-                        canvas.remove();
-                    }
+                    // --- 3D Preview Canvas DISABLED (removed as requested) ---
+                    // const bedWrapper = cardElement.querySelector('.bed-scene-wrapper');
+                    // let canvas = bedWrapper ? bedWrapper.querySelector('.card-3d-preview') : null;
+                    // if (canvas) { canvas.remove(); }
                 }
 
                 // --- NEW: Render Print History ---
@@ -2311,6 +2300,9 @@
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
+    <!-- Tooltip Component -->
+    <script src="/components/tooltip.js"></script>
 
 </body>
 

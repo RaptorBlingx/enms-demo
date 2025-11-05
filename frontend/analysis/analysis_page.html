@@ -893,7 +893,7 @@
             async function fetchDeviceList() {
                 showLoadingOverlay(mainLoadingOverlay);
                 try {
-                    const response = await fetch(`${NODE_RED_API_BASE}/api/devices`);
+                    const response = await fetch(`${NODE_RED_API_BASE}/api/devices/`);
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const devicesRaw = await response.json();
                     const devicesFiltered = devicesRaw.filter(device => device.value !== 'environment');

@@ -6,28 +6,28 @@
 #version: '3.8'
 
 volumes:
-  postgres_data:
-  grafana_data:
-  generated_pdfs:
-  mosquitto_data:
-  mosquitto_config:
-  gcode_previews_data:
+  postgres_data_demo:
+  grafana_data_demo:
+  generated_pdfs_demo:
+  mosquitto_data_demo:
+  mosquitto_config_demo:
+  gcode_previews_data_demo:
 
 services:
-  # 1. PostgreSQL Database
+  # 1. PostgreSQL Database (DEMO)
   postgres:
     image: timescale/timescaledb:latest-pg16
-    container_name: enms_postgres
+    container_name: enms_demo_postgres
     restart: unless-stopped
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_demo:/var/lib/postgresql/data
       - ./backend/db_init:/docker-entrypoint-initdb.d
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5434:5432"
     # Use a simple healthcheck for postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -35,10 +35,10 @@ services:
       timeout: 5s
       retries: 5
 
-  # 2. Mosquitto Config Generator (Future-Proof)
+  # 2. Mosquitto Config Generator (DEMO)
   mosquitto_config_generator:
     image: eclipse-mosquitto:2
-    container_name: enms_mosquitto_config
+    container_name: enms_demo_mosquitto_config
     command: >
       sh -c "
         echo 'persistence true' > /mosquitto/config/mosquitto.conf && \
@@ -55,27 +55,27 @@ services:
       - MQTT_USERNAME=${MQTT_USERNAME}
       - MQTT_PASSWORD=${MQTT_PASSWORD}
     volumes:
-      - mosquitto_config:/mosquitto/config
+      - mosquitto_config_demo:/mosquitto/config
 
-  # 3. MQTT Broker (REMOVED HEALTHCHECK)
+  # 3. MQTT Broker (DEMO)
   mosquitto:
     image: eclipse-mosquitto:2
-    container_name: enms_mosquitto
+    container_name: enms_demo_mosquitto
     restart: unless-stopped
     ports:
       - "1884:1883"
     volumes:
-      - mosquitto_config:/mosquitto/config
-      - mosquitto_data:/mosquitto/data
+      - mosquitto_config_demo:/mosquitto/config
+      - mosquitto_data_demo:/mosquitto/data
     depends_on:
       - mosquitto_config_generator
 
-  # 4. Node-RED Service (Corrected Volumes & Env)
+  # 4. Node-RED Service (DEMO)
   nodered:
     build:
       context: .
       dockerfile: ./node-red/Dockerfile
-    container_name: enms_nodered
+    container_name: enms_demo_nodered
     restart: unless-stopped
     ports:
       - "1882:1880"
@@ -109,12 +109,12 @@ services:
       - mosquitto
 
 
-  # 5. ML Prediction Worker (SIMPLIFIED depends_on)
+  # 5. ML Prediction Worker (DEMO)
   ml_worker:
     build:
       context: .
       dockerfile: ./backend/Dockerfile
-    container_name: enms_ml_worker
+    container_name: enms_demo_ml_worker
     restart: unless-stopped
     volumes:
       - ./backend/models:/models:ro
@@ -128,20 +128,20 @@ services:
       - mosquitto
       - postgres
 
-  # 6. Grafana Service (CORRECTED)
+  # 6. Grafana Service (DEMO)
   grafana:
     image: grafana/grafana:latest
-    container_name: enms_grafana
+    container_name: enms_demo_grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3002:3000"
     environment:
       - GF_INSTALL_PLUGINS=grafana-mqtt-datasource
       - GF_SECURITY_ALLOW_EMBEDDING=true
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     volumes:
-      - grafana_data:/var/lib/grafana
+      - grafana_data_demo:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       # --- THIS LINE IS RESTORED ---
@@ -150,26 +150,28 @@ services:
       postgres:
         condition: service_healthy
 
-  # 7. Python API Service
+  # 7. Python API Service (DEMO)
   python_api:
     build:
       context: ./python-api
-    container_name: enms_python_api
+    container_name: enms_demo_python_api
     restart: unless-stopped
+    ports:
+      - "5000:5000"
     env_file: ./.env
     volumes:
-      - generated_pdfs:/app/generated_pdfs
-      - gcode_previews_data:/app/gcode_previews
+      - generated_pdfs_demo:/app/generated_pdfs
+      - gcode_previews_data_demo:/app/gcode_previews
       - ./artistic-resources:/app/artistic-resources:ro
       - ./python-api:/app
       - ./backend:/app/backend:rw
     depends_on:
       - postgres
 
-  # 8. Web Server (Nginx)
+  # 8. Web Server (Nginx) - DEMO
   web_server:
     image: nginx:latest
-    container_name: enms_web_server
+    container_name: enms_demo_web_server
     restart: unless-stopped
     ports:
       - "8090:80"
@@ -177,8 +179,8 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./frontend:/usr/share/nginx/html
       - ./artistic-resources:/usr/share/nginx/html/artistic-resources
-      - generated_pdfs:/usr/share/nginx/html/dpp_reports:ro
-      - gcode_previews_data:/usr/share/nginx/html/gcode_previews:ro
+      - generated_pdfs_demo:/usr/share/nginx/html/dpp_reports:ro
+      - gcode_previews_data_demo:/usr/share/nginx/html/gcode_previews:ro
     depends_on:
       - nodered
       - python_api

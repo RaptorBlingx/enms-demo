@@ -5,6 +5,9 @@ import traceback
 import psycopg2
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from psycopg2.extras import RealDictCursor
+import csv
+from io import StringIO
 
 # These imports might not exist, but let's keep them from your original file
 # If they are the cause of the error, the app won't even start.
@@ -17,16 +20,18 @@ except ImportError:
     get_live_dpp_data = lambda: {"error": "DPP simulator not available"}
     generate_pdf_for_job = lambda job_id: {"error": "PDF service not available"}
 
-# Import auth service
+# Import authentication services
 try:
-    from auth_service import register_user, login_user, logout_user, verify_token
+    from auth_service import (
+        register_user, login_user, verify_email_token, logout_user,
+        check_session, require_auth, require_admin
+    )
     print("--- DEBUG: Successfully imported auth_service. ---")
 except ImportError as e:
     print(f"--- DEBUG: Could not import auth_service: {e} ---")
-    register_user = None
-    login_user = None
-    logout_user = None
-    verify_token = None
+    # Provide dummy functions for testing
+    require_auth = lambda f: f
+    require_admin = lambda f: f
 
 
 app = Flask(__name__)
@@ -40,9 +45,15 @@ CORS(app)
 def dpp_summary():
     """
     Provides a real-time summary of all printers for the DPP frontend.
+    Supports pagination and search via query parameters.
     """
     try:
-        data = get_live_dpp_data()
+        # Get pagination and search parameters from query string
+        page = request.args.get('page', default=1, type=int)
+        limit = request.args.get('limit', default=12, type=int)
+        search_term = request.args.get('searchTerm', default=None, type=str)
+        
+        data = get_live_dpp_data(page=page, limit=limit, searchTerm=search_term)
         if "error" in data:
             return jsonify(data), 500
         return jsonify(data)
@@ -69,169 +80,6 @@ def generate_dpp_pdf_endpoint():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-
-# --- AUTH ENDPOINTS ---
-
-@app.route('/api/auth/register', methods=['POST'])
-def api_register():
-    """User registration endpoint"""
-    if not register_user:
-        return jsonify({"success": False, "error": "Auth service not available"}), 503
-    
-    try:
-        data = request.get_json()
-        required_fields = ['email', 'password', 'organization', 'full_name', 'position', 'country']
-        
-        for field in required_fields:
-            if not data.get(field):
-                return jsonify({"success": False, "error": f"Missing required field: {field}"}), 400
-        
-        result = register_user(
-            email=data['email'],
-            password=data['password'],
-            organization=data['organization'],
-            full_name=data['full_name'],
-            position=data['position'],
-            mobile=data.get('mobile', ''),
-            country=data['country']
-        )
-        
-        status_code = 201 if result.get('success') else 400
-        return jsonify(result), status_code
-        
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"success": False, "error": str(e)}), 500
-
-@app.route('/api/auth/login', methods=['POST'])
-def api_login():
-    """User login endpoint"""
-    if not login_user:
-        return jsonify({"success": False, "error": "Auth service not available"}), 503
-    
-    try:
-        data = request.get_json()
-        
-        if not data.get('email') or not data.get('password'):
-            return jsonify({"success": False, "error": "Email and password are required"}), 400
-        
-        ip_address = request.remote_addr
-        user_agent = request.headers.get('User-Agent', '')
-        
-        result = login_user(
-            email=data['email'],
-            password=data['password'],
-            ip_address=ip_address,
-            user_agent=user_agent
-        )
-        
-        status_code = 200 if result.get('success') else 401
-        return jsonify(result), status_code
-        
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"success": False, "error": str(e)}), 500
-
-@app.route('/api/auth/logout', methods=['POST'])
-def api_logout():
-    """User logout endpoint"""
-    if not logout_user:
-        return jsonify({"success": False, "error": "Auth service not available"}), 503
-    
-    try:
-        auth_header = request.headers.get('Authorization', '')
-        if not auth_header.startswith('Bearer '):
-            return jsonify({"success": False, "error": "Invalid authorization header"}), 401
-        
-        token = auth_header.split(' ')[1]
-        result = logout_user(token)
-        
-        return jsonify(result), 200
-        
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"success": False, "error": str(e)}), 500
-
-@app.route('/api/auth/verify', methods=['GET'])
-def api_verify_token():
-    """Verify authentication token"""
-    if not verify_token:
-        return jsonify({"valid": False, "error": "Auth service not available"}), 503
-    
-    try:
-        auth_header = request.headers.get('Authorization', '')
-        if not auth_header.startswith('Bearer '):
-            return jsonify({"valid": False, "error": "Invalid authorization header"}), 401
-        
-        token = auth_header.split(' ')[1]
-        result = verify_token(token)
-        
-        status_code = 200 if result.get('valid') else 401
-        return jsonify(result), status_code
-        
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"valid": False, "error": str(e)}), 500
-
-@app.route('/api/auth/check-session', methods=['GET'])
-def api_check_session():
-    """Check if session is valid (alias for verify)"""
-    if not verify_token:
-        return jsonify({"valid": False, "error": "Auth service not available"}), 503
-    
-    try:
-        auth_header = request.headers.get('Authorization', '')
-        if not auth_header.startswith('Bearer '):
-            return jsonify({"valid": False}), 200
-        
-        token = auth_header.split(' ')[1]
-        result = verify_token(token)
-        
-        # If valid, extract user info from payload
-        if result.get('valid') and result.get('payload'):
-            payload = result['payload']
-            return jsonify({
-                "valid": True,
-                "user": {
-                    "id": payload.get('user_id'),
-                    "email": payload.get('email'),
-                    "role": payload.get('role'),
-                    "full_name": payload.get('full_name', payload.get('email', '').split('@')[0])
-                }
-            }), 200
-        else:
-            return jsonify({"valid": False, "error": result.get('error', 'Invalid token')}), 200
-        
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"valid": False, "error": str(e)}), 200
-
-@app.route('/api/auth/me', methods=['GET'])
-def api_get_current_user():
-    """Get current user information"""
-    if not verify_token:
-        return jsonify({"success": False, "error": "Auth service not available"}), 503
-    
-    try:
-        auth_header = request.headers.get('Authorization', '')
-        if not auth_header.startswith('Bearer '):
-            return jsonify({"success": False, "error": "Invalid authorization header"}), 401
-        
-        token = auth_header.split(' ')[1]
-        result = verify_token(token)
-        
-        if result.get('valid'):
-            # Return user info from the token verification
-            return jsonify({
-                "success": True,
-                "user": result.get('user', {})
-            }), 200
-        else:
-            return jsonify({"success": False, "error": "Invalid token"}), 401
-        
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"success": False, "error": str(e)}), 500
 
 # --- NEW: Database Connection Function (Docker-aware) with DEBUG LOGGING ---
 def get_db_connection():
@@ -396,6 +244,435 @@ def delete_device(device_id):
     finally:
         if conn:
             conn.close()
+
+
+# ====================================================================
+# AUTHENTICATION ENDPOINTS
+# ====================================================================
+
+@app.route('/api/auth/register', methods=['POST'])
+def auth_register():
+    """User registration endpoint"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['email', 'password', 'organization', 'full_name', 'position', 'country']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        
+        if missing_fields:
+            return jsonify({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing_fields)}'
+            }), 400
+        
+        # Get IP address and user agent
+        # X-Forwarded-For can be a long chain from Cloudflare, get first IP only
+        forwarded_for = request.headers.get('X-Forwarded-For', request.remote_addr)
+        ip_address = forwarded_for.split(',')[0].strip() if forwarded_for else request.remote_addr
+        # Truncate to 45 chars to fit in VARCHAR(50) field
+        ip_address = ip_address[:45] if ip_address else 'unknown'
+        
+        user_agent = request.headers.get('User-Agent', '')[:500]  # Truncate user agent too
+        
+        # Register user
+        result = register_user(
+            email=data['email'],
+            password=data['password'],
+            organization=data['organization'],
+            full_name=data['full_name'],
+            position=data['position'],
+            mobile=data.get('mobile', ''),
+            country=data['country'],
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        
+        if result['success']:
+            return jsonify(result), 201
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        traceback.print_exc()
+        # Provide user-friendly error messages
+        error_msg = str(e)
+        if 'email_lowercase' in error_msg:
+            error_msg = 'Email address must be lowercase'
+        elif 'unique constraint' in error_msg.lower() or 'duplicate key' in error_msg.lower():
+            error_msg = 'This email is already registered'
+        elif 'check constraint' in error_msg.lower():
+            error_msg = 'Invalid data format. Please check your inputs.'
+        else:
+            error_msg = 'Registration failed. Please try again.'
+        
+        return jsonify({'success': False, 'error': error_msg}), 500
+
+
+@app.route('/api/auth/login', methods=['POST'])
+def auth_login():
+    """User login endpoint"""
+    try:
+        data = request.get_json()
+        print(f"[AUTH] Login attempt - Email: {data.get('email') if data else 'NO DATA'}")
+        
+        if not data.get('email') or not data.get('password'):
+            print(f"[AUTH] Login failed - Missing credentials")
+            return jsonify({
+                'success': False,
+                'error': 'Email and password are required'
+            }), 400
+        
+        # Get IP address and user agent
+        # X-Forwarded-For can be a long chain from Cloudflare, get first IP only
+        forwarded_for = request.headers.get('X-Forwarded-For', request.remote_addr)
+        ip_address = forwarded_for.split(',')[0].strip() if forwarded_for else request.remote_addr
+        # Truncate to 45 chars to fit in VARCHAR(50) field
+        ip_address = ip_address[:45] if ip_address else 'unknown'
+        
+        user_agent = request.headers.get('User-Agent', '')[:500]  # Truncate user agent too
+        
+        # Login user
+        result = login_user(
+            email=data['email'],
+            password=data['password'],
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        
+        if result['success']:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 401
+            
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/auth/verify-email', methods=['POST'])
+def auth_verify_email():
+    """Email verification endpoint"""
+    try:
+        data = request.get_json()
+        
+        if not data.get('token'):
+            return jsonify({
+                'success': False,
+                'error': 'Verification token is required'
+            }), 400
+        
+        # Verify email
+        result = verify_email_token(data['token'])
+        
+        if result['success']:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/auth/forgot-password', methods=['POST'])
+def auth_forgot_password():
+    """Request password reset endpoint"""
+    try:
+        data = request.get_json()
+        
+        if not data.get('email'):
+            return jsonify({
+                'success': False,
+                'error': 'Email is required'
+            }), 400
+        
+        # Get IP address
+        ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+        
+        # Request password reset
+        from auth_service import request_password_reset
+        result = request_password_reset(data['email'], ip_address)
+        
+        # Always return success to prevent email enumeration
+        return jsonify(result), 200
+            
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/auth/reset-password', methods=['POST'])
+def auth_reset_password():
+    """Reset password with token endpoint"""
+    try:
+        data = request.get_json()
+        
+        if not data.get('token'):
+            return jsonify({
+                'success': False,
+                'error': 'Reset token is required'
+            }), 400
+        
+        if not data.get('password'):
+            return jsonify({
+                'success': False,
+                'error': 'New password is required'
+            }), 400
+        
+        # Get IP address
+        ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+        
+        # Reset password
+        from auth_service import reset_password_with_token
+        result = reset_password_with_token(data['token'], data['password'], ip_address)
+        
+        if result['success']:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/auth/logout', methods=['POST'])
+@require_auth
+def auth_logout():
+    """User logout endpoint"""
+    try:
+        # Get token from header
+        auth_header = request.headers.get('Authorization', '')
+        token = auth_header.split(' ')[1] if auth_header.startswith('Bearer ') else None
+        
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 400
+        
+        # Get IP address
+        ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+        
+        # Logout user
+        result = logout_user(token, ip_address)
+        
+        if result['success']:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/auth/check-session', methods=['GET'])
+def auth_check_session():
+    """Check if current session is valid"""
+    try:
+        # Get token from header
+        auth_header = request.headers.get('Authorization', '')
+        
+        if not auth_header.startswith('Bearer '):
+            return jsonify({'valid': False, 'error': 'No authorization token provided'}), 401
+        
+        token = auth_header.split(' ')[1]
+        
+        # Check session
+        result = check_session(token)
+        
+        if result['valid']:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 401
+            
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'valid': False, 'error': str(e)}), 500
+
+
+# ====================================================================
+# ADMIN ENDPOINTS
+# ====================================================================
+
+@app.route('/api/admin/users', methods=['GET'])
+@require_admin
+def admin_get_users():
+    """Get all users (admin only)"""
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({'error': 'Database connection failed'}), 500
+        
+        # Get query parameters
+        page = request.args.get('page', 1, type=int)
+        limit = request.args.get('limit', 50, type=int)
+        search = request.args.get('search', '', type=str)
+        
+        offset = (page - 1) * limit
+        
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        
+        # Build search query
+        where_clause = ""
+        params = []
+        if search:
+            where_clause = """
+                WHERE email ILIKE %s 
+                OR full_name ILIKE %s 
+                OR organization ILIKE %s
+                OR country ILIKE %s
+            """
+            search_param = f'%{search}%'
+            params = [search_param, search_param, search_param, search_param]
+        
+        # Get total count
+        count_query = f"SELECT COUNT(*) as total FROM demo_users {where_clause}"
+        cursor.execute(count_query, params)
+        total = cursor.fetchone()['total']
+        
+        # Get users
+        query = f"""
+            SELECT 
+                id, email, organization, full_name, position, mobile, country,
+                email_verified, role, created_at, last_login, is_active,
+                ip_address_signup
+            FROM demo_users
+            {where_clause}
+            ORDER BY created_at DESC
+            LIMIT %s OFFSET %s
+        """
+        cursor.execute(query, params + [limit, offset])
+        users = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'users': users,
+            'pagination': {
+                'page': page,
+                'limit': limit,
+                'total': total,
+                'pages': (total + limit - 1) // limit
+            }
+        }), 200
+        
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/stats', methods=['GET'])
+@require_admin
+def admin_get_stats():
+    """Get user statistics (admin only)"""
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({'error': 'Database connection failed'}), 500
+        
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        
+        # Get overall stats
+        cursor.execute("SELECT * FROM v_demo_user_stats")
+        stats = cursor.fetchone()
+        
+        # Get country distribution
+        cursor.execute("""
+            SELECT country, COUNT(*) as count
+            FROM demo_users
+            WHERE is_active = TRUE
+            GROUP BY country
+            ORDER BY count DESC
+            LIMIT 10
+        """)
+        countries = cursor.fetchall()
+        
+        # Get organization distribution
+        cursor.execute("""
+            SELECT organization, COUNT(*) as count
+            FROM demo_users
+            WHERE is_active = TRUE
+            GROUP BY organization
+            ORDER BY count DESC
+            LIMIT 10
+        """)
+        organizations = cursor.fetchall()
+        
+        # Get recent activity
+        cursor.execute("""
+            SELECT action, COUNT(*) as count, MAX(created_at) as last_occurrence
+            FROM demo_audit_log
+            WHERE created_at >= NOW() - INTERVAL '24 hours'
+            GROUP BY action
+            ORDER BY count DESC
+        """)
+        recent_activity = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'stats': stats,
+            'countries': countries,
+            'organizations': organizations,
+            'recent_activity': recent_activity
+        }), 200
+        
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/admin/export-users', methods=['GET'])
+@require_admin
+def admin_export_users():
+    """Export all users to CSV (admin only)"""
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({'error': 'Database connection failed'}), 500
+        
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        
+        # Get all users
+        cursor.execute("""
+            SELECT 
+                id, email, organization, full_name, position, mobile, country,
+                email_verified, role, created_at, last_login, is_active,
+                ip_address_signup
+            FROM demo_users
+            ORDER BY created_at DESC
+        """)
+        users = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        # Create CSV
+        output = StringIO()
+        if users:
+            writer = csv.DictWriter(output, fieldnames=users[0].keys())
+            writer.writeheader()
+            writer.writerows(users)
+        
+        csv_content = output.getvalue()
+        output.close()
+        
+        # Return CSV
+        from flask import Response
+        return Response(
+            csv_content,
+            mimetype='text/csv',
+            headers={'Content-Disposition': 'attachment; filename=enms_demo_users.csv'}
+        )
+        
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 
 # --- Main execution block ---
 if __name__ == '__main__':

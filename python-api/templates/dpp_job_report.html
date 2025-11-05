@@ -924,28 +924,34 @@
                          <span class="detail-label">Final Job Metrics</span>
                          <span class="detail-value last-job-time" style="font-size: 0.85em;"><i class="fas fa-clock"></i> Time: {% if job.duration_seconds is not none %}{{ (job.duration_seconds / 60)|round|int }} min{% else %}N/A{% endif %}</span>
                          <span class="detail-value last-job-filament" style="font-size: 0.85em;"><i class="fas fa-ruler-vertical"></i> Filament: {% if job.filament_used_g is not none %}{{ '%.2f'|format(job.filament_used_g) }} g{% else %}N/A{% endif %}</span>
-                         <span class="detail-value last-job-energy" style="font-size: 0.85em;"><i class="fas fa-bolt"></i> Energy: {% if job.session_energy_wh is not none %}{{ '%.3f'|format(job.session_energy_wh / 1000.0) }} kWh{% else %}N/A{% endif %}</span>
+                         <span class="detail-value last-job-energy" style="font-size: 0.85em;"><i class="fas fa-bolt"></i> Energy: {% if job.kwh_consumed is not none %}{{ '%.3f'|format(job.kwh_consumed) }} kWh{% elif job.session_energy_wh is not none %}{{ '%.3f'|format(job.session_energy_wh / 1000.0) }} kWh{% else %}N/A{% endif %}</span>
                      </div>
 
                      <!-- ===== NEW VISUAL SEPARATOR ===== -->
                      <div style="border-top: 1px dashed var(--gray-300); margin: 1rem 0;"></div>
 
                      <div class="detail-item job-info" style="display: block;">
-                         <span class="detail-label" style="margin-bottom: 0.3rem;">Job Details</span>
-                         <span class="detail-value job-filename" style="font-size: 0.85em; display: block; word-break: break-all;">{{ job.filename or 'N/A' }}</span>
+                         <span class="detail-label" style="margin-bottom: 0.5rem; display: block; font-size: 0.95rem;">📋 Job Details</span>
+                         <span class="detail-value job-filename" style="font-size: 1.05em; display: block; word-break: break-all; margin-bottom: 0.6rem; font-weight: 600;">{{ job.filename or 'N/A' }}</span>
                          {% if job.gcode_analysis_data %}
-                             <div class="job-extra-details" style="display: block;">
-                                 <span class="job-object-name-display" style="display: block; font-weight: 500;">Object: <span class="value">{{ job.gcode_analysis_data.object_name or job.filename }}</span></span>
-                                 <span class="job-infill" style="display: inline-block; margin-right: 0.5rem;">Infill: <span class="value">{% if job.gcode_analysis_data.infill_density_percent is defined and job.gcode_analysis_data.infill_density_percent is not none %}{{ job.gcode_analysis_data.infill_density_percent|round|int }}%{% else %}N/A{% endif %}</span></span>
-                                 <span class="job-layer-height" style="display: inline-block;">Layer: <span class="value">{% if job.gcode_analysis_data.layer_height_mm is defined and job.gcode_analysis_data.layer_height_mm is not none %}{{ '%.2f'|format(job.gcode_analysis_data.layer_height_mm) }}mm{% else %}N/A{% endif %}</span></span>
-                                 {% if job.gcode_analysis_data.object_dimensions_mm is defined and job.gcode_analysis_data.object_dimensions_mm and job.gcode_analysis_data.object_dimensions_mm.x is not none %}
-                                     <span class="job-dimensions" style="display: block; margin-top: 0.1rem;">Dimensions: <span class="value">{{ '%.0f'|format(job.gcode_analysis_data.object_dimensions_mm.x) }}x{{ '%.0f'|format(job.gcode_analysis_data.object_dimensions_mm.y) }}x{{ '%.0f'|format(job.gcode_analysis_data.object_dimensions_mm.z) }} mm</span></span>
-                                 {% else %}
-                                     <span class="job-dimensions" style="display: block; margin-top: 0.1rem;">Dimensions: <span class="value">N/A</span></span>
-                                 {% endif %}
+                             <div class="job-extra-details" style="display: block; background: rgba(255,255,255,0.4); padding: 0.8rem; border-radius: 8px;">
+                                 <span class="job-object-name-display" style="display: block; font-weight: 600; margin-bottom: 0.6rem; color: var(--gray-900); font-size: 0.95em;">🔧 Object: <span class="value">{{ job.gcode_analysis_data.object_name or job.filename }}</span></span>
+                                 
+                                 <!-- Grid Layout for Print Settings - LARGER FONTS -->
+                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem 1rem; font-size: 0.95em; margin-top: 0.5rem; line-height: 1.6;">
+                                     <span class="job-infill" style="font-weight: 500;">📐 Infill: <strong class="value" style="font-size: 1.1em; color: var(--primary);">{% if job.gcode_analysis_data.infill_density_percent is defined and job.gcode_analysis_data.infill_density_percent is not none %}{{ job.gcode_analysis_data.infill_density_percent|round|int }}%{% else %}N/A{% endif %}</strong></span>
+                                     
+                                     <span class="job-layer-height" style="font-weight: 500;">📏 Layer: <strong class="value" style="font-size: 1.1em; color: var(--primary);">{% if job.gcode_analysis_data.layer_height_mm is defined and job.gcode_analysis_data.layer_height_mm is not none %}{{ '%.2f'|format(job.gcode_analysis_data.layer_height_mm) }}mm{% else %}N/A{% endif %}</strong></span>
+                                     
+                                     <span class="job-dimensions" style="font-weight: 500; grid-column: span 2;">📦 Dimensions: <strong class="value" style="font-size: 1.1em; color: var(--primary);">{% if job.gcode_analysis_data.dimensions_x and job.gcode_analysis_data.dimensions_y and job.gcode_analysis_data.dimensions_z %}{{ job.gcode_analysis_data.dimensions_x }}×{{ job.gcode_analysis_data.dimensions_y }}×{{ job.gcode_analysis_data.dimensions_z }} mm{% else %}N/A{% endif %}</strong></span>
+                                     
+                                     <span class="job-layers" style="font-weight: 500;">🔢 Layers: <strong class="value" style="font-size: 1.1em; color: var(--gray-900);">{% if job.gcode_analysis_data.total_layers %}{{ job.gcode_analysis_data.total_layers }}{% else %}N/A{% endif %}</strong></span>
+                                     
+                                     <span class="job-material" style="font-weight: 500;">💧 Material: <strong class="value" style="font-size: 1.1em; color: var(--gray-900);">{{ job.material or 'N/A' }}</strong></span>
+                                 </div>
                              </div>
                          {% else %}
-                            <div class="job-extra-details" style="display: block; font-style: italic; color: #64748b;">G-code analysis data not available.</div>
+                            <div class="job-extra-details" style="display: block; font-style: italic; color: #64748b; background: var(--gray-50); padding: 0.6rem; border-radius: 6px; margin-top: 0.4rem;">ℹ️ Detailed G-code analysis not available for this print job.</div>
                          {% endif %}
 
                          <!-- ===== THE THUMBNAIL BLOCK HAS BEEN COMPLETELY REMOVED ===== -->

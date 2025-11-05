@@ -1,0 +1,24 @@
+[Unit]
+Description=ENMS Demo Maintenance Service
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/enms-demo
+ExecStart=/usr/bin/python3 /home/ubuntu/enms-demo/maintenance_service.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/enms-demo-maintenance.log
+StandardError=append:/var/log/enms-demo-maintenance.log
+
+# Environment
+Environment="POSTGRES_HOST=localhost"
+Environment="POSTGRES_PORT=5434"
+Environment="POSTGRES_DB=reg_ml_demo"
+Environment="POSTGRES_USER=reg_ml_demo"
+Environment="POSTGRES_PASSWORD=raptorblingx_demo"
+
+[Install]
+WantedBy=multi-user.target

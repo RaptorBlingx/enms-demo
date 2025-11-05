@@ -18,6 +18,9 @@ import re
 # No dependency on Node-RED specific objects (node, flow, etc.)
 from datetime import datetime, timedelta, timezone
 
+# Import the data enricher for sophisticated mock data
+from dpp_data_enricher import enricher
+
 
 # --- Configuration ---
 ACTIVE_POWER_THRESHOLD = 5.0
@@ -236,37 +239,46 @@ def evaluate_tips(printer_data):
     """
     Evaluates all tip rules against the printer_data and returns the text
     of the highest-priority applicable tip.
+    
+    Enhanced to support both static string templates and dynamic lambda functions
+    for sophisticated, data-driven recommendations.
     """
-    applicable_tips = []
-    # Ensure printer_data is not None, which can happen in edge cases
-    if printer_data is None:
-        printer_data = {}
+    # Import the new smart tips system
+    try:
+        from smart_tips_system import evaluate_smart_tips
+        return evaluate_smart_tips(printer_data)
+    except Exception as e:
+        # Fallback to basic system if smart tips fail
+        print(f"WARNING: Smart tips system failed: {e}. Falling back to basic tips.", file=sys.stderr)
+        
+        applicable_tips = []
+        if printer_data is None:
+            printer_data = {}
 
-    for rule in TIP_RULES:
-        try:
-            # Check if the conditions for the rule are met
-            if rule["conditions"](printer_data):
-                # Prepare a copy of printer_data for safe formatting
-                # This prevents errors if a tip refers to a nested key that might not exist
-                format_data = printer_data.copy()
-                format_data["job_details"] = printer_data.get("job_details", {})
+        for rule in TIP_RULES:
+            try:
+                if rule["conditions"](printer_data):
+                    format_data = printer_data.copy()
+                    format_data["job_details"] = printer_data.get("job_details", {})
+                    
+                    # Handle both string templates and callable templates
+                    if callable(rule["tip_template"]):
+                        tip_text = rule["tip_template"](printer_data)
+                    else:
+                        tip_text = rule["tip_template"].format(**format_data)
+                    
+                    applicable_tips.append({
+                        "priority": rule["priority"],
+                        "text": tip_text
+                    })
+            except Exception:
+                pass
 
-                applicable_tips.append({
-                    "priority": rule["priority"],
-                    "text": rule["tip_template"].format(**format_data)
-                })
-        except Exception:
-            # Silently ignore tips that fail to format. This prevents a single
-            # bad tip from crashing the whole process. A warning could be logged here.
-            pass
+        if applicable_tips:
+            applicable_tips.sort(key=lambda x: x["priority"], reverse=True)
+            return applicable_tips[0]["text"]
 
-    # If any tips were found, sort them by priority (highest first) and return the best one
-    if applicable_tips:
-        applicable_tips.sort(key=lambda x: x["priority"], reverse=True)
-        return applicable_tips[0]["text"]
-
-    # If no specific tips match, return a generic, helpful message
-    return "Monitor print settings for optimal energy and material use."
+        return "Monitor print settings for optimal energy and material use."
 
 
 # --- Main Execution ---
@@ -328,26 +340,27 @@ def get_live_dpp_data(page=1, limit=12, searchTerm=None):
     ) ps ON true
     LEFT JOIN LATERAL (
         SELECT * FROM print_jobs
-        WHERE device_id = d.device_id AND filename = ps.filename
-        ORDER BY start_time DESC NULLS LAST LIMIT 1
+        WHERE filename = ps.filename AND gcode_analysis_data IS NOT NULL
+        ORDER BY start_time DESC NULLS LAST
+        LIMIT 1
     ) pj ON (ps.filename IS NOT NULL)
     LEFT JOIN LATERAL (
         SELECT energy_total_wh AS current_total_wh FROM energy_data
         WHERE device_id = d.device_id ORDER BY timestamp DESC LIMIT 1
     ) ed ON true
     LEFT JOIN LATERAL (
-        SELECT session_energy_wh, duration_seconds, filament_used_g, thumbnail_url, per_part_analysis
+        SELECT (kwh_consumed * 1000) AS session_energy_wh, duration_seconds, filament_used_g, thumbnail_url, per_part_analysis
         FROM print_jobs
-        WHERE device_id = d.device_id AND status = 'done' AND session_energy_wh IS NOT NULL
-        ORDER BY start_time DESC NULLS LAST
+        WHERE device_id = d.device_id AND status = 'completed' AND kwh_consumed IS NOT NULL
+        ORDER BY end_time DESC NULLS LAST
         LIMIT 1
     ) lj ON true
     LEFT JOIN LATERAL (
         SELECT json_agg(h) AS history_data FROM (
-            SELECT filename, session_energy_wh, end_time, thumbnail_url, per_part_analysis
+            SELECT filename, (kwh_consumed * 1000) AS session_energy_wh, end_time, thumbnail_url, per_part_analysis
             FROM print_jobs
-            WHERE device_id = d.device_id AND status = 'done' AND session_energy_wh IS NOT NULL
-            ORDER BY start_time DESC NULLS LAST
+            WHERE device_id = d.device_id AND status = 'completed' AND kwh_consumed IS NOT NULL
+            ORDER BY end_time DESC NULLS LAST
             LIMIT 5
         ) h
     ) hist ON true
@@ -360,8 +373,11 @@ def get_live_dpp_data(page=1, limit=12, searchTerm=None):
 
     try:
         conn = psycopg2.connect(
-            dbname="reg_ml", user="reg_ml", password="raptorblingx",
-            host="postgres", port="5432"
+            dbname=os.environ.get('POSTGRES_DB', 'reg_ml_demo'),
+            user=os.environ.get('POSTGRES_USER', 'reg_ml_demo'),
+            password=os.environ.get('POSTGRES_PASSWORD', 'raptorblingx_demo'),
+            host=os.environ.get('POSTGRES_HOST', 'postgres'),
+            port=os.environ.get('POSTGRES_PORT', '5432')
         )
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -377,7 +393,7 @@ def get_live_dpp_data(page=1, limit=12, searchTerm=None):
         query_global_history_count = """
         SELECT COUNT(*) FROM print_jobs pj
         JOIN devices d ON pj.device_id = d.device_id
-        WHERE pj.status = 'done'
+        WHERE pj.status = 'completed'
         AND (%s IS NULL OR d.friendly_name ILIKE %s OR pj.filename ILIKE %s);
         """
         cur.execute(query_global_history_count, (searchTerm, search_pattern, search_pattern))
@@ -387,12 +403,12 @@ def get_live_dpp_data(page=1, limit=12, searchTerm=None):
         # New query to get the paginated ITEMS matching the search
         query_global_history_items = """
         SELECT
-            d.friendly_name, pj.filename, pj.session_energy_wh,
+            d.friendly_name, pj.filename, pj.kwh_consumed,
             pj.end_time, pj.thumbnail_url, pj.dpp_pdf_url
         FROM print_jobs pj
         JOIN devices d ON pj.device_id = d.device_id
         WHERE
-            pj.status = 'done'
+            pj.status = 'completed'
             AND (%s IS NULL OR d.friendly_name ILIKE %s OR pj.filename ILIKE %s)
         ORDER BY pj.end_time DESC NULLS LAST
         LIMIT %s OFFSET %s;
@@ -407,7 +423,7 @@ def get_live_dpp_data(page=1, limit=12, searchTerm=None):
             global_history_list.append({
                 "printerName": row['friendly_name'],
                 "filename": clean_filename(row['filename']),
-                "kwh": float(row['session_energy_wh']) / 1000.0 if row['session_energy_wh'] is not None else 0.0,
+                "kwh": float(row['kwh_consumed']) if row['kwh_consumed'] is not None else 0.0,
                 "completedAt": row['end_time'].isoformat() if row['end_time'] else None,
                 "thumbnailUrl": row['thumbnail_url'],
 		        "pdfUrl": row['dpp_pdf_url']
@@ -456,6 +472,13 @@ def get_live_dpp_data(page=1, limit=12, searchTerm=None):
                     "history": [dict(job, filename=clean_filename(job.get('filename'))) for job in (row.get('history_data') or []) if isinstance(job, dict)]
                 }
 
+                # Enrich with sophisticated mock data for current job only
+                # Last job info and history come from DB and remain static
+                device_output = enricher.enrich_current_job(device_output, row['device_id'])
+                device_output = enricher.enrich_last_job(device_output, row['device_id'], conn)
+                # Keep history from SQL query - it's already from DB with real kwh values
+                # device_output['history'] stays as-is from line 462
+                
                 energy_for_plant = device_output['jobKwhConsumed'] if is_printing else device_output['kwhLast24h']
                 device_output['plantStage'] = get_plant_stage(energy_for_plant)
 
