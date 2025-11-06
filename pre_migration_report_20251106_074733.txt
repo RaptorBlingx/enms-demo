@@ -1,0 +1,298 @@
+=
+PRE-MIGRATION VALIDATION REPORT
+Generated: Thu Nov  6 07:47:33 UTC 2025
+Server: lauds-toy
+IP: 172.18.0.1 172.17.0.1 10.33.10.109 172.19.0.1 
+=
+
+1. SYSTEM INFORMATION
+---------------------
+OS: Ubuntu 24.04.1 LTS
+Kernel: 6.8.0-85-generic
+Uptime: up 2 weeks, 16 hours, 10 minutes
+Disk Usage:
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2       894G  326G  558G  37% /
+
+2. DOCKER STATUS
+----------------
+Docker Version: Docker version 28.5.0, build 887030f
+Docker Compose Version: Docker Compose version v2.40.0
+
+Running Containers:
+NAMES                  STATUS                  SIZE
+enms_demo_nodered      Up 44 hours (healthy)   0B (virtual 1.45GB)
+enms_demo_postgres     Up 44 hours (healthy)   63B (virtual 1.07GB)
+enms_demo_web_server   Up 44 hours             2B (virtual 152MB)
+enms_demo_ml_worker    Up 44 hours             1.35MB (virtual 602MB)
+enms_demo_mosquitto    Up 44 hours             0B (virtual 10.4MB)
+enms_demo_grafana      Up 23 hours             0B (virtual 730MB)
+
+Container Health:
+  enms_demo_nodered: healthy
+  enms_demo_postgres: healthy
+  enms_demo_web_server: 
+no healthcheck
+  enms_demo_ml_worker: 
+no healthcheck
+  enms_demo_mosquitto: 
+no healthcheck
+  enms_demo_grafana: 
+no healthcheck
+
+3. DOCKER VOLUMES
+-----------------
+local     enms-demo_gcode_previews_data
+local     enms-demo_gcode_previews_data_demo
+local     enms-demo_generated_pdfs
+local     enms-demo_generated_pdfs_demo
+local     enms-demo_grafana_data
+local     enms-demo_grafana_data_demo
+local     enms-demo_mosquitto_config
+local     enms-demo_mosquitto_config_demo
+local     enms-demo_mosquitto_data
+local     enms-demo_mosquitto_data_demo
+local     enms-demo_postgres_data
+local     enms-demo_postgres_data_demo
+
+Volume Sizes:
+  enms-demo_gcode_previews_data: 0
+  enms-demo_gcode_previews_data_demo: 0
+  enms-demo_generated_pdfs: 1.1G
+  enms-demo_generated_pdfs_demo: 1.5G
+  enms-demo_grafana_data: 65.2M
+  enms-demo_grafana_data_demo: 65.4M
+  enms-demo_mosquitto_config: 8.0K
+  enms-demo_mosquitto_config_demo: 8.0K
+  enms-demo_mosquitto_data: 4.0K
+  enms-demo_mosquitto_data_demo: 4.0K
+  enms-demo_postgres_data: 267.9M
+  enms-demo_postgres_data_demo: 447.3M
+
+4. SYSTEMD SERVICES
+-------------------
+  demo-data-generator.service              loaded    active   running DEMO Real-Time Data Generator for enms-demo
+  enms-demo-maintenance.service            loaded    inactive dead    ENMS Demo Maintenance Service
+  grafana-backup.service                   loaded    inactive dead    EnMS Grafana Dashboard Backup
+
+Data Generator Service:
+● demo-data-generator.service - DEMO Real-Time Data Generator for enms-demo
+     Loaded: loaded (/etc/systemd/system/demo-data-generator.service; disabled; preset: enabled)
+     Active: active (running) since Wed 2025-11-05 14:34:00 UTC; 17h ago
+   Main PID: 1805499 (python3)
+      Tasks: 2 (limit: 38301)
+     Memory: 18.5M (peak: 19.7M)
+        CPU: 16.827s
+     CGroup: /system.slice/demo-data-generator.service
+             └─1805499 /usr/bin/python3 /home/ubuntu/enms-demo/realtime_demo_generator.py
+
+Nov 06 07:42:21 lauds-toy python3[1805499]: --- Iteration 6156 ---
+Nov 06 07:42:21 lauds-toy python3[1805499]:   bambu_p1s_1: Starting new print - bracket_mount.gcode (PETG)
+Nov 06 07:42:21 lauds-toy python3[1805499]: [07:41:41] Updated: 6 printing, 2 idle, 1 offline
+Nov 06 07:42:21 lauds-toy python3[1805499]: --- Iteration 6157 ---
+Nov 06 07:42:21 lauds-toy python3[1805499]: [07:41:51] Updated: 6 printing, 2 idle, 1 offline
+Nov 06 07:42:21 lauds-toy python3[1805499]: --- Iteration 6158 ---
+Nov 06 07:42:21 lauds-toy python3[1805499]: [07:42:01] Updated: 6 printing, 2 idle, 1 offline
+Nov 06 07:42:21 lauds-toy python3[1805499]: --- Iteration 6159 ---
+Nov 06 07:42:21 lauds-toy python3[1805499]:   creality_ender3_v2_1: Starting new print - prototype_v2.gcode (TPU)
+Nov 06 07:42:21 lauds-toy python3[1805499]: [07:42:11] Updated: 6 printing, 1 idle, 1 offline
+
+5. DATABASE STATUS
+------------------
+PostgreSQL Connection: /var/run/postgresql:5432 - accepting connections
+
+Database Size:
+ reg_ml_demo | reg_ml_demo | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |                   | 213 MB | pg_default | 
+
+Table Sizes:
+                                                 List of relations
+ Schema |            Name            | Type  |    Owner    | Persistence | Access method |    Size    | Description 
+--------+----------------------------+-------+-------------+-------------+---------------+------------+-------------
+ public | demo_audit_log             | table | reg_ml_demo | permanent   | heap          | 16 kB      | 
+ public | demo_sessions              | table | reg_ml_demo | permanent   | heap          | 16 kB      | 
+ public | demo_users                 | table | reg_ml_demo | permanent   | heap          | 16 kB      | 
+ public | devices                    | table | reg_ml_demo | permanent   | heap          | 16 kB      | 
+ public | dht22_data                 | table | reg_ml_demo | permanent   | heap          | 384 kB     | 
+ public | energy_data                | table | reg_ml_demo | permanent   | heap          | 8192 bytes | 
+ public | environment_data           | table | reg_ml_demo | permanent   | heap          | 8192 bytes | 
+ public | max6675_temperature_data   | table | reg_ml_demo | permanent   | heap          | 472 kB     | 
+ public | measurements               | table | reg_ml_demo | permanent   | heap          | 0 bytes    | 
+ public | ml_predictions             | table | reg_ml_demo | permanent   | heap          | 8192 bytes | 
+ public | monitor_readings           | table | reg_ml_demo | permanent   | heap          | 0 bytes    | 
+ public | monitor_state_analysis     | table | reg_ml_demo | permanent   | heap          | 0 bytes    | 
+ public | monitor_training_data      | table | reg_ml_demo | permanent   | heap          | 0 bytes    | 
+ public | mpu6050_accelerometer_data | table | reg_ml_demo | permanent   | heap          | 512 kB     | 
+ public | mpu6050_gyroscope_data     | table | reg_ml_demo | permanent   | heap          | 512 kB     | 
+ public | mpu6050_temperature_data   | table | reg_ml_demo | permanent   | heap          | 0 bytes    | 
+ public | power_predictions          | table | reg_ml_demo | permanent   | heap          | 664 kB     | 
+ public | print_jobs                 | table | reg_ml_demo | permanent   | heap          | 200 kB     | 
+ public | printer_derived_status     | table | reg_ml_demo | permanent   | heap          | 0 bytes    | 
+ public | printer_status             | table | reg_ml_demo | permanent   | heap          | 8192 bytes | 
+ public | sensor_data                | table | reg_ml_demo | permanent   | heap          | 8192 bytes | 
+ public | smartplug_data             | table | reg_ml_demo | permanent   | heap          | 512 kB     | 
+ public | temperature_readings       | table | reg_ml_demo | permanent   | heap          | 376 kB     | 
+(23 rows)
+
+
+Record Counts:
+  Devices: 33
+  Print Jobs: 359
+  Printer Status: 627380
+  Energy Data: 627380
+  Sensor Data: 0
+  ML Predictions: 0
+
+Latest Data Timestamp:
+          latest_data          
+-------------------------------
+ 2025-11-06 07:42:52.032419+00
+(1 row)
+
+
+6. API HEALTH CHECKS
+--------------------
+Web Server (port 8090):
+  Status: 200, Time: 0.001994s
+
+API Summary Endpoint:
+  Success: null, Devices: 0
+
+Grafana (port 3002):
+  Database: ok, Version: 12.2.1
+
+Node-RED (port 1882):
+  Status: 200
+
+7. NETWORK & PORTS
+------------------
+Listening Ports:
+
+8. PROJECT FILES
+----------------
+Project Directory: /home/ubuntu/enms-demo
+Directory Size: 189M
+
+Key Files:
+-rw-r--r-- 1 ubuntu ubuntu 862 Nov  4 12:26 /home/ubuntu/enms-demo/.env
+-rw-rw-r-- 1 ubuntu ubuntu 5.8K Nov  4 14:27 /home/ubuntu/enms-demo/docker-compose.yml
+-rw-rw-r-- 1 ubuntu ubuntu 254K Oct 31 13:17 /home/ubuntu/enms-demo/node-red/flows.json
+
+Backend Models:
+-rw-r--r-- 1 ubuntu ubuntu  610 Nov  3 10:57 README.md
+-rw-rw-r-- 1 ubuntu ubuntu  281 Nov  5 09:27 ender3_model_evaluation_metrics.joblib
+-rw-rw-r-- 1 ubuntu ubuntu   51 Nov  5 09:27 ender3_model_features.joblib
+-rw-rw-r-- 1 ubuntu ubuntu 925K Nov  5 09:27 ender3_randomforest_model.joblib
+-rw-rw-r-- 1 ubuntu ubuntu  999 Nov  5 09:27 ender3_scaler.joblib
+-rw-rw-r-- 1 ubuntu ubuntu   51 Nov  5 09:27 ender3_scaler_columns.joblib
+-rw-rw-r-- 1 ubuntu ubuntu  625 Nov  5 09:27 linear_regression_model.joblib
+-rw-rw-r-- 1 ubuntu ubuntu  649 Nov  5 09:27 model_20250407_135319.joblib
+-rw-rw-r-- 1 ubuntu ubuntu  489 Nov  5 09:27 model_evaluation_metrics.joblib
+-rw-rw-r-- 1 ubuntu ubuntu  271 Nov  5 09:27 model_features.joblib
+-rw-rw-r-- 1 ubuntu ubuntu 1.6K Nov  5 09:27 scaler.joblib
+-rw-rw-r-- 1 ubuntu ubuntu 1.2K Nov  5 09:27 scaler_20250407_135319.joblib
+-rw-rw-r-- 1 ubuntu ubuntu  271 Nov  5 09:27 scaler_columns.joblib
+
+Grafana Dashboards:
+  Count: 12
+
+9. RESOURCE USAGE
+-----------------
+Memory:
+               total        used        free      shared  buff/cache   available
+Mem:            14Gi       7.8Gi       1.5Gi       2.5Gi       7.2Gi       6.2Gi
+Swap:             0B          0B          0B
+
+CPU Load:
+ 07:47:41 up 14 days, 16:10,  3 users,  load average: 1.25, 0.88, 0.93
+
+Docker Stats (snapshot):
+NAME                   CPU %     MEM USAGE / LIMIT
+enms_demo_nodered      5.01%     349.4MiB / 4GiB
+enms_demo_postgres     22.75%    281.9MiB / 4GiB
+enms_demo_web_server   0.05%     6.195MiB / 4GiB
+enms_demo_ml_worker    0.00%     533.5MiB / 4GiB
+enms_demo_mosquitto    0.02%     2.164MiB / 4GiB
+enms_demo_grafana      0.10%     241.4MiB / 4GiB
+
+10. RECENT LOGS (Last 10 lines per service)
+--------------------------------------------
+
+=== enms_demo_postgres ===
+
+=== enms_demo_mosquitto ===
+1762415193: New connection from 172.19.0.3:32854 on port 1883.
+1762415193: Client nodered_b742cacf32a6508d disconnected, not authorised.
+1762415208: New connection from 172.19.0.3:53906 on port 1883.
+1762415208: Client nodered_b742cacf32a6508d disconnected, not authorised.
+1762415223: New connection from 172.19.0.3:56166 on port 1883.
+1762415223: Client nodered_b742cacf32a6508d disconnected, not authorised.
+1762415238: New connection from 172.19.0.3:35904 on port 1883.
+1762415238: Client nodered_b742cacf32a6508d disconnected, not authorised.
+1762415253: New connection from 172.19.0.3:41406 on port 1883.
+1762415253: Client nodered_b742cacf32a6508d disconnected, not authorised.
+
+=== enms_demo_nodered ===
+6 Nov 07:46:30 - [info] [mqtt-broker:becc22b8f4461a4d] Connection failed to broker: mqtt://89.252.166.188:2010
+6 Nov 07:46:33 - [info] [mqtt-broker:ff72b847b3a5073d] Connection failed to broker: mqtt://mosquitto:1883
+6 Nov 07:46:45 - [info] [mqtt-broker:becc22b8f4461a4d] Connection failed to broker: mqtt://89.252.166.188:2010
+6 Nov 07:46:48 - [info] [mqtt-broker:ff72b847b3a5073d] Connection failed to broker: mqtt://mosquitto:1883
+6 Nov 07:47:00 - [info] [mqtt-broker:becc22b8f4461a4d] Connection failed to broker: mqtt://89.252.166.188:2010
+6 Nov 07:47:03 - [info] [mqtt-broker:ff72b847b3a5073d] Connection failed to broker: mqtt://mosquitto:1883
+6 Nov 07:47:15 - [info] [mqtt-broker:becc22b8f4461a4d] Connection failed to broker: mqtt://89.252.166.188:2010
+6 Nov 07:47:18 - [info] [mqtt-broker:ff72b847b3a5073d] Connection failed to broker: mqtt://mosquitto:1883
+6 Nov 07:47:30 - [info] [mqtt-broker:becc22b8f4461a4d] Connection failed to broker: mqtt://89.252.166.188:2010
+6 Nov 07:47:33 - [info] [mqtt-broker:ff72b847b3a5073d] Connection failed to broker: mqtt://mosquitto:1883
+
+=== enms_demo_grafana ===
+logger=plugins.update.checker t=2025-11-06T07:06:48.947186976Z level=info msg="Update check succeeded" duration=124.542267ms
+logger=cleanup t=2025-11-06T07:16:48.363141147Z level=info msg="Completed cleanup jobs" duration=51.865956ms
+logger=plugins.update.checker t=2025-11-06T07:16:48.968631625Z level=info msg="Update check succeeded" duration=145.981581ms
+logger=infra.usagestats t=2025-11-06T07:17:52.350882524Z level=info msg="Usage stats are ready to report"
+logger=cleanup t=2025-11-06T07:26:48.321871215Z level=info msg="Completed cleanup jobs" duration=10.916865ms
+logger=plugins.update.checker t=2025-11-06T07:26:48.950242355Z level=info msg="Update check succeeded" duration=127.395297ms
+logger=cleanup t=2025-11-06T07:36:48.318611935Z level=info msg="Completed cleanup jobs" duration=7.566858ms
+logger=plugins.update.checker t=2025-11-06T07:36:48.976401469Z level=info msg="Update check succeeded" duration=153.299921ms
+logger=cleanup t=2025-11-06T07:46:48.313980667Z level=info msg="Completed cleanup jobs" duration=2.643839ms
+logger=plugins.update.checker t=2025-11-06T07:46:48.967466643Z level=info msg="Update check succeeded" duration=143.629502ms
+
+=== enms_demo_python_api ===
+  No logs or container not found
+
+=== enms_demo_ml_worker ===
+
+=== enms_demo_web_server ===
+172.19.0.1 - - [06/Nov/2025:07:42:57 +0000] "POST /api/generate_dpp_pdf HTTP/1.1" 200 64 "-" "python-requests/2.31.0" "-"
+10.33.10.108 - - [06/Nov/2025:07:43:45 +0000] "GET /api/dpp_summary?page=1&limit=12 HTTP/1.1" 200 56449 "https://lauds-demo.intel50001.com/dpp_page.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" "188.119.37.155"
+10.33.10.108 - - [06/Nov/2025:07:43:45 +0000] "GET /artistic-resources/plants/tomato/tomato_stage_12.png?v=2 HTTP/1.1" 200 777433 "https://lauds-demo.intel50001.com/dpp_page.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" "188.119.37.155"
+10.33.10.108 - - [06/Nov/2025:07:44:46 +0000] "GET /api/dpp_summary?page=1&limit=12 HTTP/1.1" 200 56530 "https://lauds-demo.intel50001.com/dpp_page.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" "188.119.37.155"
+10.33.10.108 - - [06/Nov/2025:07:44:46 +0000] "GET /artistic-resources/plants/tomato/tomato_stage_10.png?v=2 HTTP/1.1" 304 0 "https://lauds-demo.intel50001.com/dpp_page.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" "188.119.37.155"
+10.33.10.108 - - [06/Nov/2025:07:45:44 +0000] "GET /api/dpp_summary?page=1&limit=12 HTTP/1.1" 200 56533 "https://lauds-demo.intel50001.com/dpp_page.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" "188.119.37.155"
+10.33.10.108 - - [06/Nov/2025:07:45:45 +0000] "GET /artistic-resources/plants/tomato/tomato_stage_09.png?v=2 HTTP/1.1" 304 0 "https://lauds-demo.intel50001.com/dpp_page.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" "188.119.37.155"
+10.33.10.108 - - [06/Nov/2025:07:46:46 +0000] "GET /api/dpp_summary?page=1&limit=12 HTTP/1.1" 200 56593 "https://lauds-demo.intel50001.com/dpp_page.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" "188.119.37.155"
+172.19.0.1 - - [06/Nov/2025:07:47:40 +0000] "GET / HTTP/1.1" 200 66597 "-" "curl/8.5.0" "-"
+172.19.0.1 - - [06/Nov/2025:07:47:41 +0000] "GET /api/dpp_summary HTTP/1.1" 200 56593 "-" "curl/8.5.0" "-"
+
+11. BACKUP RECOMMENDATION
+-------------------------
+Recommended backup size estimate:
+  Database: ~213MB
+  Total Docker volumes: ~usage:
+  Project files: 189M
+
+12. VALIDATION CHECKLIST
+------------------------
+  ✅ All Docker containers running (6/6+)
+  ✅ Database accessible
+  ✅ Data generator service active
+  ✅ Web server responding
+  ❌ API not responding correctly
+  ✅ Grafana healthy
+  ✅ Recent data being generated (10 records in last 5 min)
+
+OVERALL HEALTH: 6/7 checks passed
+⚠️  System is mostly healthy but has some issues
+
+=
+END OF REPORT
+Report saved to: pre_migration_report_20251106_074733.txt
+=
