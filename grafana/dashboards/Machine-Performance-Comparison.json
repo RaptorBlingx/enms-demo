@@ -143,7 +143,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
             "axisBorderShow": false,
@@ -151,8 +151,8 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
+            "fillOpacity": 85,
+            "gradientMode": "scheme",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -168,15 +168,23 @@
           },
           "mappings": [],
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
                 "color": "green",
                 "value": null
               },
               {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "orange",
+                "value": 75
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 90
               }
             ]
           },
@@ -192,8 +200,8 @@
       },
       "id": 3,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
+        "barRadius": 0.1,
+        "barWidth": 0.85,
         "fullHighlight": false,
         "groupWidth": 0.7,
         "legend": {
@@ -222,7 +230,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "-- This query finds the difference between the first and last cumulative energy reading\r\n-- for each machine within the selected time range.\r\nSELECT\r\n  d.friendly_name AS \"Machine\",\r\n  (MAX(ed.energy_total_wh) - MIN(ed.energy_total_wh)) / 1000 AS \"Total Energy (kWh)\"\r\nFROM\r\n  energy_data AS ed\r\nJOIN\r\n  devices AS d ON ed.device_id = d.device_id\r\nWHERE\r\n  $__timeFilter(ed.timestamp)\r\n  AND d.device_id != 'environment'\r\nGROUP BY\r\n  \"Machine\"\r\nORDER BY\r\n  \"Total Energy (kWh)\" DESC;",
+          "rawSql": "-- Calculate actual energy consumption based on power readings and time intervals\r\nWITH energy_calc AS (\r\n  SELECT\r\n    ed.device_id,\r\n    ed.timestamp,\r\n    ed.power_watts,\r\n    LEAD(ed.timestamp) OVER (PARTITION BY ed.device_id ORDER BY ed.timestamp) - ed.timestamp AS time_interval\r\n  FROM energy_data ed\r\n  WHERE $__timeFilter(ed.timestamp)\r\n    AND ed.device_id != 'environment'\r\n    AND ed.power_watts IS NOT NULL\r\n)\r\nSELECT\r\n  d.friendly_name AS \"Machine\",\r\n  SUM(ec.power_watts * EXTRACT(EPOCH FROM ec.time_interval) / 3600) / 1000 AS \"Total Energy (kWh)\"\r\nFROM energy_calc ec\r\nJOIN devices d ON ec.device_id = d.device_id\r\nWHERE ec.time_interval IS NOT NULL\r\nGROUP BY \"Machine\"\r\nORDER BY \"Total Energy (kWh)\" DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -255,7 +263,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
             "axisBorderShow": false,
@@ -263,8 +271,8 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
+            "fillOpacity": 85,
+            "gradientMode": "scheme",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -280,19 +288,27 @@
           },
           "mappings": [],
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
                 "color": "green",
                 "value": null
               },
               {
+                "color": "yellow",
+                "value": 33
+              },
+              {
+                "color": "orange",
+                "value": 66
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 90
               }
             ]
           },
-          "unit": "kWh/g"
+          "unit": "wattHourPerGram"
         },
         "overrides": []
       },
@@ -304,8 +320,8 @@
       },
       "id": 2,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
+        "barRadius": 0.1,
+        "barWidth": 0.85,
         "fullHighlight": false,
         "groupWidth": 0.7,
         "legend": {
@@ -334,7 +350,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  d.friendly_name AS \"Machine\",\r\n  -- FIX: Use session_energy_wh and convert from Wh to kWh\r\n  SUM(pj.session_energy_wh / 1000.0) / NULLIF(SUM(pj.filament_used_g), 0) AS \"Efficiency (kWh/g)\"\r\nFROM\r\n  print_jobs AS pj\r\nJOIN\r\n  devices AS d ON pj.device_id = d.device_id\r\nWHERE\r\n  pj.status = 'completed'\r\n  -- FIX: Check the correct column for valid data\r\n  AND pj.session_energy_wh > 0\r\n  AND pj.filament_used_g > 0\r\n  AND $__timeFilter(pj.end_time)\r\nGROUP BY\r\n  \"Machine\"\r\nORDER BY\r\n  \"Efficiency (kWh/g)\" ASC;",
+          "rawSql": "SELECT\r\n  d.friendly_name AS \"Machine\",\r\n  -- Convert kWh to Wh (*1000), then divide by grams\r\n  SUM(pj.kwh_consumed * 1000) / NULLIF(SUM(pj.filament_used_g), 0) AS \"Efficiency (Wh/g)\"\r\nFROM\r\n  print_jobs AS pj\r\nJOIN\r\n  devices AS d ON pj.device_id = d.device_id\r\nWHERE\r\n  pj.status = 'completed'\r\n  AND pj.kwh_consumed > 0\r\n  AND pj.filament_used_g > 0\r\n  AND $__timeFilter(pj.end_time)\r\nGROUP BY\r\n  \"Machine\"\r\nORDER BY\r\n  \"Efficiency (Wh/g)\" ASC;",
           "refId": "A",
           "sql": {
             "columns": [

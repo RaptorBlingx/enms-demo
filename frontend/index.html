@@ -727,6 +727,21 @@
             transform: translateY(-1px);
         }
         
+        /* Admin Button Styling */
+        .profile-button-welcome.admin-button {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+        
+        .profile-button-welcome.admin-button:hover {
+            background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+            border-color: #a78bfa;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            transform: translateY(-3px);
+        }
+        
         /* Enhanced Welcome Screen Styles */
         .demo-badge-welcome {
             position: fixed;
@@ -980,6 +995,15 @@
                                 <span class="tooltip-wrapper" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">
                                     <i class="fa-solid fa-circle-info tooltip-icon"></i>
                                     <span class="tooltip-content">For compliance and sustainability. Access digital product passports with lifecycle tracking and environmental metrics.</span>
+                                </span>
+                            </div>
+                            <div id="adminButtonContainer" style="position: relative; display: none;">
+                                <button class="profile-button-welcome admin-button" id="adminDashboardBtn">
+                                    <span>🔐 Admin Dashboard</span>
+                                </button>
+                                <span class="tooltip-wrapper" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">
+                                    <i class="fa-solid fa-circle-info tooltip-icon"></i>
+                                    <span class="tooltip-content">For administrators. Manage users, view system logs, and configure platform settings.</span>
                                 </span>
                             </div>
                         </div>
@@ -1535,6 +1559,15 @@ const contentSources = {
     });
 });
 
+        // --- Admin Dashboard Button Event Listener ---
+        const adminDashboardBtn = document.getElementById('adminDashboardBtn');
+        if (adminDashboardBtn) {
+            adminDashboardBtn.addEventListener('click', () => {
+                console.log('[DEBUG] Admin Dashboard button clicked');
+                window.location.href = '/admin/dashboard.html';
+            });
+        }
+
         // --- Logout Button Event Listener ---
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
@@ -1550,6 +1583,7 @@ const contentSources = {
             const user = getCurrentUser();
             const userDisplay = document.getElementById('userNameDisplay');
             const userAvatar = document.getElementById('userAvatar');
+            const adminButtonContainer = document.getElementById('adminButtonContainer');
             
             if (user && userDisplay) {
                 const fullName = user.full_name || user.email;
@@ -1565,6 +1599,11 @@ const contentSources = {
                         initials = fullName.substring(0, 2);
                     }
                     userAvatar.textContent = initials.toUpperCase();
+                }
+                
+                // Show admin button if user is admin
+                if (user.role === 'admin' && adminButtonContainer) {
+                    adminButtonContainer.style.display = 'block';
                 }
             }
         }

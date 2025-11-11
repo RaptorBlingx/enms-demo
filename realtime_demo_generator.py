@@ -283,6 +283,23 @@ def update_all_devices(conn):
         is_printing = state.state_text == 'Printing'
         is_operational = state.state_text not in ['Offline', 'Error']
         
+        # Calculate z_height based on progress
+        z_height_mm = None
+        if is_printing and state.progress_percent > 0:
+            # Assume typical print height of 50-200mm
+            max_height = random.uniform(50, 200) if not hasattr(state, 'max_height') else state.max_height
+            if not hasattr(state, 'max_height'):
+                state.max_height = max_height
+            z_height_mm = round((state.progress_percent / 100) * max_height, 2)
+        
+        # Generate ambient temperature (room temp 20-25°C)
+        ambient_temp_c = round(random.uniform(20, 25), 1)
+        
+        # Speed multiplier (typically 100%, can be 80-120%)
+        speed_multiplier_percent = 100.0
+        if is_printing:
+            speed_multiplier_percent = round(random.uniform(95, 105), 1)
+        
         status_records.append((
             device_id,
             timestamp,
@@ -295,7 +312,10 @@ def update_all_devices(conn):
             is_printing,
             False,  # is_paused
             False,  # is_error
-            state.filename  # filename
+            state.filename,  # filename
+            z_height_mm,  # z_height_mm
+            speed_multiplier_percent,  # speed_multiplier_percent
+            ambient_temp_c  # ambient_temp_c
         ))
         
         # Calculate voltage, current, and daily energy
@@ -322,8 +342,9 @@ def update_all_devices(conn):
         cursor.executemany("""
             INSERT INTO printer_status (device_id, timestamp, state_text, material,
                                        nozzle_temp_actual, bed_temp_actual, progress_percent,
-                                       is_operational, is_printing, is_paused, is_error, filename)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                       is_operational, is_printing, is_paused, is_error, filename,
+                                       z_height_mm, speed_multiplier_percent, ambient_temp_c)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT DO NOTHING
         """, status_records)
         
@@ -398,6 +419,10 @@ def update_all_devices(conn):
             
             # Queue PDF generation in background thread to avoid blocking
             pdf_queue.put(inserted_job_id)
+        
+        # Commit all changes if not already committed (when no jobs completed)
+        if not completed_jobs:
+            conn.commit()
         
         # Print summary
         printing_count = sum(1 for s in device_states.values() if s.state_text == 'Printing')

@@ -288,9 +288,9 @@
           }
         }
       ],
-      "title": "Power Usage",
+      "title": "Voltage & Current",
       "type": "timeseries",
-      "description": "Real-time power consumption monitoring from Shelly smart plugs. Shows kWh usage over time. Essential for energy auditing and cost allocation. Normal range: 0.1-0.5 kW for 3D printers."
+      "description": "Real-time voltage and current monitoring from smart plugs. Shows electrical parameters to detect anomalies. Normal range: 220-240V, 0.5-2A for 3D printers."
     },
     {
       "collapsed": false,
@@ -316,16 +316,26 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 280,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
+                "color": "blue",
+                "value": null
+              },
+              {
                 "color": "green",
-                "value": 0
+                "value": 180
+              },
+              {
+                "color": "yellow",
+                "value": 240
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 260
               }
             ]
           },
@@ -335,7 +345,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 5,
+        "w": 6,
         "x": 0,
         "y": 10
       },
@@ -365,7 +375,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT temperature_c \nFROM max6675_temperature_data \nWHERE device_id = 'ESP32_SensorHub_Raptor' \nORDER BY \"timestamp\" DESC LIMIT 1",
+          "rawSql": "SELECT AVG(nozzle_temp_actual) as temperature_c \nFROM printer_status \nWHERE device_id != 'environment' AND $__timeFilter(\"timestamp\") AND nozzle_temp_actual > 0\nGROUP BY device_id\nORDER BY temperature_c DESC LIMIT 1",
           "refId": "A",
           "sql": {
             "columns": [
@@ -396,33 +406,48 @@
         "type": "grafana-postgresql-datasource",
         "uid": "aei784ojzbrpca"
       },
-      "description": "Root Mean Square vibration magnitude from MPU6050 accelerometer. Indicates mechanical stability. High values suggest loose belts, worn bearings, or improper leveling. Threshold: >0.5 g requires maintenance.",
+      "description": "Average print speed multiplier percentage across all active printers. Shows how fast printers are running relative to their configured speed. 100% = normal speed, higher values = faster printing.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 120,
+          "min": 80,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 90
+              },
+              {
                 "color": "green",
-                "value": 0
+                "value": 95
+              },
+              {
+                "color": "yellow",
+                "value": 105
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 110
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 5,
+        "w": 6,
+        "x": 6,
         "y": 10
       },
       "id": 7,
@@ -453,7 +478,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \n  SQRT(\n    AVG(accel_x * accel_x + accel_y * accel_y + accel_z * accel_z)\n  ) as moving_rms\nFROM mpu6050_accelerometer_data\nWHERE device_id = 'ESP32_SensorHub_Raptor'\n  AND timestamp > NOW() - INTERVAL '5 minutes'\n",
+          "rawSql": "SELECT \n  AVG(speed_multiplier_percent) as speed_percent\nFROM printer_status\nWHERE device_id != 'environment'\n  AND $__timeFilter(\"timestamp\")\n  AND is_printing = true\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -474,7 +499,7 @@
           }
         }
       ],
-      "title": "Vibration Level (RMS)",
+      "title": "Print Speed Multiplier",
       "type": "stat"
     },
     {
@@ -488,16 +513,26 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 300,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
-                "value": 0
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 150
+              },
+              {
+                "color": "orange",
+                "value": 200
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 250
               }
             ]
           },
@@ -507,8 +542,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 9,
+        "w": 6,
+        "x": 12,
         "y": 10
       },
       "id": 6,
@@ -567,33 +602,44 @@
         "type": "grafana-postgresql-datasource",
         "uid": "aei784ojzbrpca"
       },
-      "description": "Environmental temperature and humidity from sensor array. Affects print quality and material behavior. Optimal printing environment: 20-25\u00b0C, 40-60% humidity.",
+      "description": "Environmental temperature from sensor array. Affects print quality and material behavior. Optimal printing environment: 20-25\u00b0C for best results.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 30,
+          "min": 15,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
+                "color": "blue",
+                "value": null
+              },
+              {
                 "color": "green",
-                "value": 0
+                "value": 20
+              },
+              {
+                "color": "yellow",
+                "value": 26
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 28
               }
             ]
-          }
+          },
+          "unit": "celsius"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 11,
-        "x": 13,
+        "w": 6,
+        "x": 18,
         "y": 10
       },
       "id": 8,
@@ -624,7 +670,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \n  temperature_c as \"Temperature\",\n  humidity_pct as \"Humidity\"\nFROM dht22_data \nWHERE device_id = 'ESP32_SensorHub_Raptor' \nORDER BY \"timestamp\" DESC LIMIT 1",
+          "rawSql": "SELECT \n  AVG(ambient_temp_c) as \"Temperature\"\nFROM printer_status \nWHERE device_id != 'environment' AND $__timeFilter(\"timestamp\") AND ambient_temp_c IS NOT NULL\nGROUP BY device_id\nORDER BY \"Temperature\" DESC LIMIT 1",
           "refId": "A",
           "sql": {
             "columns": [
@@ -752,7 +798,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  \"timestamp\" AS \"time\",\r\n  accel_x,\r\n  accel_y,\r\n  accel_z\r\nFROM mpu6050_accelerometer_data\r\nWHERE device_id = 'ESP32_SensorHub_Raptor' AND $__timeFilter(\"timestamp\")\r\nORDER BY \"timestamp\"",
+          "rawSql": "SELECT\r\n  $__timeGroup(\"timestamp\", '30s') AS \"time\",\r\n  AVG(nozzle_temp_actual) as \"Nozzle Temp\",\r\n  AVG(bed_temp_actual) as \"Bed Temp\"\r\nFROM printer_status\r\nWHERE device_id != 'environment' AND $__timeFilter(\"timestamp\") AND is_printing = true\r\nGROUP BY 1\r\nORDER BY 1",
           "refId": "A",
           "sql": {
             "columns": [
@@ -773,9 +819,9 @@
           }
         }
       ],
-      "title": "MPU6050 Accelerometer (X, Y, Z)",
+      "title": "Printer Temperatures (Nozzle & Bed)",
       "type": "timeseries",
-      "description": "3-axis acceleration measurements in g-force. Monitors print head movements and detects mechanical vibrations. Used for quality control and predictive maintenance. Z-axis should be near -1g when stationary."
+      "description": "Real-time monitoring of nozzle and bed temperatures across all active printers. Critical for print quality and material adhesion. Typical ranges: Nozzle 190-260°C, Bed 50-110°C depending on material."
     },
     {
       "datasource": {
@@ -866,9 +912,9 @@
             "uid": "aei784ojzbrpca"
           },
           "editorMode": "code",
-          "format": "table",
+          "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  \"timestamp\" AS \"time\",\r\n  gyro_x,\r\n  gyro_y,\r\n  gyro_z\r\nFROM mpu6050_gyroscope_data\r\nWHERE device_id = 'ESP32_SensorHub_Raptor' AND $__timeFilter(\"timestamp\")\r\nORDER BY \"timestamp\"",
+          "rawSql": "SELECT\r\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\r\n  device_id AS metric,\r\n  AVG(progress_percent) as value\r\nFROM printer_status\r\nWHERE device_id != 'environment' AND $__timeFilter(\"timestamp\") AND is_printing = true AND progress_percent > 0\r\nGROUP BY 1, 2\r\nORDER BY 1, 2",
           "refId": "A",
           "sql": {
             "columns": [
@@ -889,9 +935,9 @@
           }
         }
       ],
-      "title": "MPU6050 Gyroscope (X, Y, Z)",
+      "title": "Print Progress by Device",
       "type": "timeseries",
-      "description": "3-axis angular velocity in degrees/second. Detects rotation and sudden movements. High gyro readings during printing indicate mechanical instability or belt tension issues."
+      "description": "Real-time print progress for each active printer. Shows completion percentage over time for ongoing print jobs. Helps monitor job status and estimate completion times."
     },
     {
       "collapsed": false,
@@ -1009,13 +1055,13 @@
           },
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(temperature_c) AS \"Temperature (\u00b0C)\",\n  AVG(humidity_pct) AS \"Humidity (%)\"\nFROM dht22_data\nWHERE device_id = 'ESP32_SensorHub_Raptor'\n  AND $__timeFilter(\"timestamp\")\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT \n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(ambient_temp_c) AS \"Ambient Temperature (\u00b0C)\"\nFROM printer_status\nWHERE device_id != 'environment'\n  AND $__timeFilter(\"timestamp\")\n  AND ambient_temp_c IS NOT NULL\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
-      "title": "Temperatures & Humidity",
+      "title": "Ambient Temperature",
       "type": "timeseries",
-      "description": "Combined environmental monitoring panel. Tracks ambient temperature, hotend temperature, and relative humidity. All three factors directly impact print adhesion and part dimensional accuracy."
+      "description": "Ambient temperature monitoring from printer sensors. Tracks environmental conditions that affect print quality and material behavior. Optimal printing environment: 20-25°C."
     },
     {
       "datasource": {
@@ -1060,13 +1106,13 @@
           },
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(temperature_c) AS \"Hotend Temperature\"\nFROM max6675_temperature_data\nWHERE device_id = 'ESP32_SensorHub_Raptor'\n  AND $__timeFilter(\"timestamp\")\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(nozzle_temp_actual) AS \"Hotend Temperature\"\nFROM printer_status\nWHERE device_id != 'environment'\n  AND $__timeFilter(\"timestamp\")\n  AND nozzle_temp_actual > 0\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
-      "title": "MAX6675 - Hotend Temperature",
+      "title": "Nozzle Temperature Over Time",
       "type": "timeseries",
-      "description": "High-precision K-type thermocouple readings with 0.25\u00b0C resolution. Most accurate hotend temperature measurement. Use as ground truth for PID tuning and temperature calibration."
+      "description": "Real-time nozzle/hotend temperature monitoring across all printers. Shows temperature stability and heating patterns. Use for PID tuning and identifying thermal issues."
     },
     {
       "datasource": {
@@ -1111,11 +1157,11 @@
           },
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(accel_x) AS \"Accel X\",\n  AVG(accel_y) AS \"Accel Y\",\n  AVG(accel_z) AS \"Accel Z\"\nFROM mpu6050_accelerometer_data\nWHERE device_id = 'ESP32_SensorHub_Raptor'\n  AND $__timeFilter(\"timestamp\")\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(bed_temp_actual) AS \"Bed Temperature\"\nFROM printer_status\nWHERE device_id != 'environment'\n  AND $__timeFilter(\"timestamp\")\n  AND bed_temp_actual > 0\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
-      "title": "MPU6050 - Accelerometer (X, Y, Z)",
+      "title": "Bed Temperature Over Time",
       "type": "timeseries"
     },
     {
@@ -1161,11 +1207,11 @@
           },
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(gyro_x) AS \"Gyro X\",\n  AVG(gyro_y) AS \"Gyro Y\",\n  AVG(gyro_z) AS \"Gyro Z\"\nFROM mpu6050_gyroscope_data\nWHERE device_id = 'ESP32_SensorHub_Raptor'\n  AND $__timeFilter(\"timestamp\")\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(z_height_mm) AS \"Z Height (mm)\"\nFROM printer_status\nWHERE device_id != 'environment'\n  AND $__timeFilter(\"timestamp\")\n  AND is_printing = true\n  AND z_height_mm IS NOT NULL\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
-      "title": "MPU6050 - Gyroscope (X, Y, Z)",
+      "title": "Z-Axis Height Progress",
       "type": "timeseries"
     },
     {
@@ -1236,13 +1282,13 @@
           },
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(power_w) AS \"Power\",\n  AVG(voltage_v) AS \"Voltage\"\nFROM smartplug_data\nWHERE device_id = 'SmartPlug_3DPrinter_01'\n  AND $__timeFilter(\"timestamp\")\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroup(\"timestamp\", '1m') AS \"time\",\n  AVG(power_watts) AS \"Power\",\n  AVG(voltage) AS \"Voltage\"\nFROM energy_data\nWHERE device_id != 'environment'\n  AND $__timeFilter(\"timestamp\")\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
       "title": "Smart Plug - Power & Voltage",
       "type": "timeseries",
-      "description": "Shelly plug metrics showing active power (W) and AC voltage (V). Monitor for voltage fluctuations that can affect print quality. Standard voltage: 110-120V (US) or 220-240V (EU)."
+      "description": "Energy monitoring showing active power (W) and AC voltage (V). Monitor for voltage fluctuations that can affect print quality. Standard voltage: 110-120V (US) or 220-240V (EU)."
     }
   ],
   "preload": false,

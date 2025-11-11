@@ -24,7 +24,7 @@ except ImportError:
 try:
     from auth_service import (
         register_user, login_user, verify_email_token, logout_user,
-        check_session, require_auth, require_admin
+        check_session, require_auth, require_admin, get_db_connection
     )
     print("--- DEBUG: Successfully imported auth_service. ---")
 except ImportError as e:
@@ -32,6 +32,7 @@ except ImportError as e:
     # Provide dummy functions for testing
     require_auth = lambda f: f
     require_admin = lambda f: f
+    get_db_connection = lambda: None
 
 
 app = Flask(__name__)
