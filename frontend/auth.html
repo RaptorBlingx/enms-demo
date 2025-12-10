@@ -353,6 +353,42 @@
             font-size: 0.85rem;
         }
 
+        .lauds-acknowledgment {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .lauds-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .lauds-logo {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .lauds-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .lauds-text {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
         @media (max-width: 640px) {
             .auth-header {
                 padding: 30px 20px;
@@ -552,6 +588,18 @@
                     </a>
                 </div>
             </form>
+        </div>
+
+        <!-- LAUDS Acknowledgment -->
+        <div class="lauds-acknowledgment">
+            <div class="lauds-logos">
+                <img src="files/lauds-logo_lauds-orangebox-logo-removebg-preview.png" alt="LAUDS Logo" class="lauds-logo">
+                <img src="files/eu_flag_black_white_high.jpg" alt="European Union Flag" class="lauds-logo">
+                <img src="files/APlus_Engineering-removebg-preview.png" alt="A+ Engineering Logo" class="lauds-logo">
+            </div>
+            <p class="lauds-text">
+                <strong>LAUDS</strong> Local Accessible Urban Digital Sustainable Factories is a Horizon Europe research and innovation action - Co-funded by the European Union, 2024-2026, GA 101135986
+            </p>
         </div>
     </div>
 
