@@ -201,6 +201,92 @@
             color: #00897b;
             margin-bottom: 1rem;
         }
+
+        /* Compliance Table Styles */
+        .compliance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .compliance-table thead {
+            background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
+            color: white;
+        }
+
+        .compliance-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .compliance-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+            vertical-align: top;
+        }
+
+        .compliance-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .compliance-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 24px;
+            font-size: 1.1rem;
+        }
+
+        .status-implemented {
+            color: #2e7d32;
+        }
+
+        .status-partial {
+            color: #f57c00;
+        }
+
+        .status-pending {
+            color: #c62828;
+        }
+
+        .clause-number {
+            font-weight: 600;
+            color: #00897b;
+            white-space: nowrap;
+        }
+
+        .evidence-text {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .next-step-text {
+            color: #2d3748;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .table-note {
+            font-size: 0.9rem;
+            color: #718096;
+            font-style: italic;
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: #f7fafc;
+            border-left: 3px solid #00897b;
+        }
     </style>
 </head>
 <body>
@@ -214,52 +300,245 @@
             <div class="section">
                 <h2>
                     <span class="icon-badge"><i class="fa-solid fa-certificate"></i></span>
-                    What is ISO 50001?
+                    ISO 50001 Alignment in LAUDS Factories
                 </h2>
                 <p>
-                    <strong>ISO 50001:2018</strong> is an international standard that specifies requirements for establishing, implementing, maintaining, and improving an energy management system (EnMS). The purpose is to enable organizations to follow a systematic approach in achieving continual improvement of energy performance, including energy efficiency, energy use, and energy consumption.
+                    The ISO 50001:2018 standard provides a shared framework through which organizations of every kind can establish, implement, and continually improve energy management. Its opening statement makes this intent unambiguous: the standard "is applicable to any organization regardless of its type, size, complexity, geographical location, or products and services provided."
                 </p>
                 <p>
-                    This Human-Centric EnMS platform is designed to support organizations in meeting ISO 50001 requirements by providing comprehensive tools for energy monitoring, analysis, and reporting.
+                    Within this understanding, <strong>Human-Centric Energy Management System (Human-Centric EnMS)</strong> demonstrates how ISO 50001 can be interpreted in FabLabs, maker spaces, and microfactories – the so-called <strong>LAUDS Factories</strong> – by transforming management clauses into participatory practices. As the standard itself requires documentation of procedures, reviews, forms and records, LAUDS factories are expected to develop that documentation to use along with the Human-Centric EnMS.
+                </p>
+                <p>
+                    The following table summarizes how the Human-Centric EnMS aligns with ISO 50001:2018 requirements within the LAUDS Factories. It highlights which requirements are already implemented through the system, and which remain to be established by the LAUDS Factories by developing the documentation and records.
+                </p>
+                <p class="table-note">
+                    <strong>Legend:</strong> ✅ = Implemented through the system | 🌱 = To be established as documentation requirement by LAUDS Factories
                 </p>
             </div>
 
             <div class="section">
                 <h2>
-                    <span class="icon-badge"><i class="fa-solid fa-check-circle"></i></span>
-                    Platform Compliance Features
+                    <span class="icon-badge"><i class="fa-solid fa-table"></i></span>
+                    Clauses 4-6: Context, Leadership & Planning
                 </h2>
-                <div class="requirements-grid">
-                    <div class="requirement-card">
-                        <div class="number">4.1</div>
-                        <h4>Understanding the Organization</h4>
-                        <p>Comprehensive dashboards provide insights into organizational energy context and significant energy uses (SEUs).</p>
-                    </div>
-                    <div class="requirement-card">
-                        <div class="number">4.2</div>
-                        <h4>Understanding Stakeholder Needs</h4>
-                        <p>Multi-profile support (Staff, Technical, DPP) addresses different stakeholder requirements and perspectives.</p>
-                    </div>
-                    <div class="requirement-card">
-                        <div class="number">6.2</div>
-                        <h4>Energy Objectives & Planning</h4>
-                        <p>Performance comparison tools enable setting and tracking energy objectives with measurable targets.</p>
-                    </div>
-                    <div class="requirement-card">
-                        <div class="number">6.3</div>
-                        <h4>Energy Baseline & EnPIs</h4>
-                        <p>Historical data analysis establishes energy baselines and Energy Performance Indicators (EnPIs).</p>
-                    </div>
-                    <div class="requirement-card">
-                        <div class="number">9.1</div>
-                        <h4>Monitoring & Measurement</h4>
-                        <p>Real-time monitoring of energy consumption across all equipment with sub-second granularity.</p>
-                    </div>
-                    <div class="requirement-card">
-                        <div class="number">9.3</div>
-                        <h4>Management Review</h4>
-                        <p>Comprehensive reporting tools provide data for management review and decision-making.</p>
-                    </div>
+                <table class="compliance-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">ISO 50001 Clause</th>
+                            <th style="width: 20%;">What ISO Expects</th>
+                            <th style="width: 8%;">Status</th>
+                            <th style="width: 32%;">Evidence in Human-Centric EnMS (LAUDS Factories)</th>
+                            <th style="width: 25%;">Next Step</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="clause-number">4.1 Context of the organization</td>
+                            <td>Determine internal/external issues affecting EnMS</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">FabLab/maker-space context mapped (user behaviour, equipment diversity, educational mission, NEB/Green Deal alignment)</td>
+                            <td class="next-step-text">Maintain context notes annually</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">4.2 Interested parties</td>
+                            <td>Identify stakeholders & needs</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">Makers, artists, educators, lab operators, community; tailored interfaces (ops dashboards, public visuals)</td>
+                            <td class="next-step-text">Keep a simple stakeholder register</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">4.3 Scope & boundaries</td>
+                            <td>Define EnMS scope and boundaries</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">Functional, equipment-level boundaries in practice</td>
+                            <td class="next-step-text">Scope & boundaries statement should be documented and recorded</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">4.4 Energy management system</td>
+                            <td>Establish processes for continual improvement (PDCA)</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">PDCA via data collection → reviews/workshops → actions → iteration</td>
+                            <td class="next-step-text">Keep a brief PDCA evidence log</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">5.1–5.2 Leadership & energy policy</td>
+                            <td>Demonstrated commitment; written policy</td>
+                            <td><span class="status-icon status-partial">✅🌱</span></td>
+                            <td class="evidence-text">Commitment evident via transparency & participation realized through system</td>
+                            <td class="next-step-text">Policy document should be defined, signed and published by the management of the facility</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">5.3 Roles, responsibilities & authorities</td>
+                            <td>Assign EnMS roles; communicate</td>
+                            <td><span class="status-icon status-partial">✅🌱</span></td>
+                            <td class="evidence-text">Distributed leadership <em>works</em> informally and <em>implemented</em> by system users</td>
+                            <td class="next-step-text">Nominate EnMS Coordinator & Data Owner; share RACI</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">6.1 Risks & opportunities</td>
+                            <td>Determine risks/opportunities; plan actions</td>
+                            <td><span class="status-icon status-pending">🌱</span></td>
+                            <td class="evidence-text">Considered implicitly in workshops</td>
+                            <td class="next-step-text">Start a lightweight risk/opportunity register</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">6.2 Objectives & targets</td>
+                            <td>Set measurable objectives and EnPIs</td>
+                            <td><span class="status-icon status-partial">✅🌱</span></td>
+                            <td class="evidence-text">Qualitative/behavioral goals; baselines in data</td>
+                            <td class="next-step-text">Add 2–3 numeric EnPIs (e.g., kWh/print, idle kWh/day) as documented targets</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">6.3 Energy review / SEUs</td>
+                            <td>Establish energy review; identify SEUs</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">Data-driven review (3D printers/CNC/HVAC); patterns (idle/standby/peaks) identified collaboratively</td>
+                            <td class="next-step-text">Snapshot SEU list quarterly</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">6.4 EnPIs & baselines</td>
+                            <td>Define indicators and baselines</td>
+                            <td><span class="status-icon status-partial">✅🌱</span></td>
+                            <td class="evidence-text">Site baselines from time-series</td>
+                            <td class="next-step-text">Formalise baseline period & calculation note</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>
+                    <span class="icon-badge"><i class="fa-solid fa-table"></i></span>
+                    Clauses 7-10: Support, Operation & Performance
+                </h2>
+                <table class="compliance-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">ISO 50001 Clause</th>
+                            <th style="width: 20%;">What ISO Expects</th>
+                            <th style="width: 8%;">Status</th>
+                            <th style="width: 32%;">Evidence in Human-Centric EnMS (LAUDS Factories)</th>
+                            <th style="width: 25%;">Next Step</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="clause-number">7.1 Resources</td>
+                            <td>Provide resources for EnMS</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">Sensors, infra, staff/volunteer time allocated; iterative upgrades</td>
+                            <td class="next-step-text">Keep a minimal resource inventory</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">7.2 Competence & training</td>
+                            <td>Ensure competence; retain training records</td>
+                            <td><span class="status-icon status-pending">🌱</span></td>
+                            <td class="evidence-text">Learning-by-doing workshops; roles understood socially</td>
+                            <td class="next-step-text">1-page competence matrix + brief training log</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">7.3–7.4 Awareness & communication</td>
+                            <td>Ensure awareness and communication of energy goals</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">Artistic feedback, gamification, DPP; regular maker briefings & open dashboards</td>
+                            <td class="next-step-text">Record key comms (date/link) briefly</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">7.5 Documented information</td>
+                            <td>Control docs/records (versioning/retention)</td>
+                            <td><span class="status-icon status-partial">✅🌱</span></td>
+                            <td class="evidence-text">Open repos/dashboards as living records</td>
+                            <td class="next-step-text">Add a simple doc-control note (who approves, where stored)</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">8.1 Operational planning & control</td>
+                            <td>Control processes impacting SEUs</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">Real-time alerts, visible guidance, shared maintenance/calibration sessions</td>
+                            <td class="next-step-text">Save short "how we operate" notes</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">8.2–8.3 Design & procurement</td>
+                            <td>Consider energy in design/purchasing</td>
+                            <td><span class="status-icon status-pending">🌱</span></td>
+                            <td class="evidence-text">DPP integrates energy/material visibility</td>
+                            <td class="next-step-text">1-page energy-aware procurement guideline</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">9.1 Monitoring & measurement (9.1.1)</td>
+                            <td>Plan & implement measurement; analyse performance</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">ESP32 + Node-RED + TimescaleDB + Grafana; continuous time-series & analytics</td>
+                            <td class="next-step-text">Add a one-pager method statement</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">9.1.2 Evaluation of compliance</td>
+                            <td>Check legal/other compliance</td>
+                            <td><span class="status-icon status-pending">🌱</span></td>
+                            <td class="evidence-text">Not performed</td>
+                            <td class="next-step-text">Annual compliance check & note findings according to regulations</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">9.2 Internal audit</td>
+                            <td>Planned internal audits; records</td>
+                            <td><span class="status-icon status-pending">🌱</span></td>
+                            <td class="evidence-text">Workshops act as informal audits</td>
+                            <td class="next-step-text">Convert 2 workshops/year into simple audits (plan/report)</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">9.3 Management review</td>
+                            <td>Periodic top-level EnMS review</td>
+                            <td><span class="status-icon status-partial">✅🌱</span></td>
+                            <td class="evidence-text">Consortium/site meetings; system level info to be used in the meetings</td>
+                            <td class="next-step-text">Capture agendas, decisions, actions per meeting</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">10.1 Nonconformity & corrective action</td>
+                            <td>Log issues; causes; actions; verification</td>
+                            <td><span class="status-icon status-partial">✅🌱</span></td>
+                            <td class="evidence-text">Corrections handled ad-hoc via dashboards</td>
+                            <td class="next-step-text">Start a 1-tab CA log (issue/cause/action/check)</td>
+                        </tr>
+                        <tr>
+                            <td class="clause-number">10.2 Continual improvement</td>
+                            <td>Continually improve EnMS & performance</td>
+                            <td><span class="status-icon status-implemented">✅</span></td>
+                            <td class="evidence-text">Reduced idle/standby; better scheduling & materials; maturing UIs</td>
+                            <td class="next-step-text">Link 1–2 metrics to each improvement</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>
+                    <span class="icon-badge"><i class="fa-solid fa-lightbulb"></i></span>
+                    Key Achievements in LAUDS Factories
+                </h2>
+                <div class="highlight-box">
+                    <h3>What We Have Accomplished</h3>
+                    <p>The Human-Centric EnMS has successfully implemented core technical and participatory elements that align with ISO 50001 requirements:</p>
+                    <ul>
+                        <li><strong>Real-Time Monitoring Infrastructure:</strong> ESP32 sensors + Node-RED + TimescaleDB + Grafana for continuous energy measurement</li>
+                        <li><strong>Stakeholder Engagement:</strong> Multi-profile interfaces (Staff, Technical, DPP) serving makers, educators, lab operators, and community</li>
+                        <li><strong>Data-Driven Energy Reviews:</strong> Collaborative identification of Significant Energy Uses (SEUs) through workshops and analytics</li>
+                        <li><strong>Participatory Improvement Cycles:</strong> PDCA implemented via data collection → reviews/workshops → actions → iteration</li>
+                        <li><strong>Transparency & Awareness:</strong> Artistic feedback, gamification, Digital Product Passports, and open dashboards</li>
+                        <li><strong>Measurable Energy Reductions:</strong> Reduced idle/standby consumption, better scheduling, improved material efficiency</li>
+                    </ul>
+                </div>
+                <div class="highlight-box">
+                    <h3>What Remains to Be Formalized</h3>
+                    <p>To achieve full ISO 50001 alignment, LAUDS Factories need to develop formal documentation and procedures:</p>
+                    <ul>
+                        <li><strong>Policy & Governance:</strong> Written energy policy signed by management; defined roles (EnMS Coordinator, Data Owner)</li>
+                        <li><strong>Risk Management:</strong> Lightweight risk/opportunity register for systematic risk assessment</li>
+                        <li><strong>Quantified Targets:</strong> 2-3 numeric EnPIs (e.g., kWh/print, idle kWh/day) with documented baselines</li>
+                        <li><strong>Training Records:</strong> Competence matrix and brief training log for staff and volunteers</li>
+                        <li><strong>Compliance Checks:</strong> Annual legal/regulatory compliance verification and documentation</li>
+                        <li><strong>Internal Audits:</strong> Convert 2 workshops/year into formal audit cycles with plans and reports</li>
+                        <li><strong>Corrective Actions:</strong> Simple CA log tracking issues, causes, actions, and verification</li>
+                    </ul>
                 </div>
             </div>
 
@@ -355,25 +634,23 @@
             <div class="section">
                 <h2>
                     <span class="icon-badge"><i class="fa-solid fa-award"></i></span>
-                    Implementation Benefits
+                    Journey Towards ISO 50001 Alignment
                 </h2>
                 <div class="highlight-box">
-                    <h3>Achieving ISO 50001 Certification with ENMS Platform</h3>
+                    <h3>Our Approach to Energy Management Standards</h3>
                     <p>
-                        Organizations using this platform gain significant advantages in achieving and maintaining ISO 50001 certification:
+                        The Human-Centric EnMS demonstrates a practical implementation pathway for ISO 50001 principles in non-traditional manufacturing environments (FabLabs, maker spaces, microfactories). Our journey shows:
                     </p>
                     <ul>
-                        <li><strong>Reduced Manual Effort:</strong> Automated data collection eliminates manual logging</li>
-                        <li><strong>Compliance Confidence:</strong> Built-in adherence to standard requirements</li>
-                        <li><strong>Audit Readiness:</strong> Always-available documentation and evidence</li>
-                        <li><strong>Continuous Improvement:</strong> Real-time insights drive ongoing optimization</li>
-                        <li><strong>Cost Savings:</strong> Typical 10-20% energy reduction within first year</li>
-                        <li><strong>Competitive Advantage:</strong> Demonstrate environmental commitment to stakeholders</li>
+                        <li><strong>Technology Foundation:</strong> Robust automated data collection and analytics infrastructure in place</li>
+                        <li><strong>Participatory Practices:</strong> Active stakeholder engagement replacing traditional top-down mandates</li>
+                        <li><strong>Living Documentation:</strong> Open repositories and dashboards as real-time evidence of energy performance</li>
+                        <li><strong>Continuous Improvement:</strong> Demonstrated energy reductions through behavioral changes and system optimization</li>
+                        <li><strong>Scalable Model:</strong> Proven approach adaptable to diverse organizational contexts and sizes</li>
                     </ul>
-                </div>
-                <div class="compliance-badge">
-                    <i class="fa-solid fa-check-circle"></i>
-                    <span>ISO 50001:2018 Ready</span>
+                    <p style="margin-top: 1rem;">
+                        <strong>Next Steps:</strong> While core technical and operational elements are implemented, formal documentation and governance structures are being developed to complete full ISO 50001 alignment. This phased approach allows LAUDS Factories to build practical energy management capabilities while progressively formalizing processes.
+                    </p>
                 </div>
             </div>
 

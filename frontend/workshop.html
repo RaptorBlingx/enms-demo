@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop Programme - ENMS Demo</title>
+    <title>Human-Centric Energy Workshop - ENMS Demo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
@@ -41,37 +41,17 @@
             align-items: center;
             gap: 0.75rem;
         }
+        .section h3 {
+            font-size: 1.3rem;
+            color: #0d47a1;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
         .section p {
             font-size: 1.05rem;
             color: #4a5568;
             margin-bottom: 1rem;
             line-height: 1.8;
-        }
-        .workshop-card {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #1976d2;
-        }
-        .workshop-card h3 {
-            color: #1976d2;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .workshop-card .meta {
-            display: flex;
-            gap: 2rem;
-            margin: 1rem 0;
-            font-size: 0.9rem;
-            color: #64748b;
-        }
-        .workshop-card .meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
         .icon-badge {
             display: inline-flex;
@@ -82,200 +62,268 @@
             background: rgba(25, 118, 210, 0.1);
             border-radius: 10px;
         }
-        .icon-badge i { font-size: 1.2rem; color: #1976d2; }
-        ul { margin-left: 1.5rem; }
-        ul li { margin-bottom: 0.5rem; color: #4a5568; }
-        .cta-button {
-            display: inline-block;
+        .icon-badge i {
+            font-size: 1.2rem;
+            color: #1976d2;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #1976d215 0%, #0d47a115 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #1976d2;
+            margin: 1.5rem 0;
+        }
+        .highlight-box h3 {
+            margin-top: 0;
+        }
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        ul li {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .workshop-phase {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #1976d2;
+        }
+        .workshop-phase h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        .phase-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: #1976d2;
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 0.75rem;
+        }
+        .facilitator-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .facilitator-table thead {
             background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
             color: white;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-top: 1rem;
-            transition: transform 0.3s;
         }
-        .cta-button:hover { transform: translateY(-2px); }
+        .facilitator-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .facilitator-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+            vertical-align: top;
+        }
+        .facilitator-table tbody tr:hover {
+            background: #f7fafc;
+        }
+        .facilitator-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1976d2;
+            margin: 2rem 0 1rem 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fa-solid fa-chalkboard-user"></i> Workshop Programme</h1>
-            <p>Training & Knowledge Transfer Sessions</p>
+            <h1><i class="fa-solid fa-chalkboard-user"></i> Human-Centric Energy Workshop</h1>
+            <p>A Creative Journey Toward Understanding Sustainability</p>
         </div>
 
         <div class="content">
             <div class="section">
                 <h2>
-                    <span class="icon-badge"><i class="fa-solid fa-bullseye"></i></span>
-                    Programme Overview
+                    <span class="icon-badge"><i class="fa-solid fa-lightbulb"></i></span>
+                    About the Workshop
                 </h2>
                 <p>
-                    Our comprehensive workshop programme is designed to empower your team with the knowledge and skills needed to maximize the value of the ENMS platform. Through hands-on training, best practice sharing, and real-world case studies, participants gain practical expertise in energy management and Industry 4.0 technologies.
+                    The <strong>Human-Centric Energy Workshop</strong> was designed within the LAUDSEXP-01-43 project to transform the technical idea of energy management into a hands-on, human experience. It invites participants to discover how creativity, empathy, and technology can merge to shape a more sustainable future — from imagination to prototyping.
+                </p>
+                <p>
+                    Rather than teaching energy efficiency as a theory, the workshop turns it into a collective story. Through creative drama, guided discussions, 3D printing, and artistic co-creation, participants explore the emotional and practical sides of sustainability — and see their own role within it.
                 </p>
             </div>
 
             <div class="section">
                 <h2>
-                    <span class="icon-badge"><i class="fa-solid fa-calendar-days"></i></span>
-                    Available Workshops
+                    <span class="icon-badge"><i class="fa-solid fa-compass"></i></span>
+                    Concept and Aims
                 </h2>
-
-                <div class="workshop-card">
-                    <h3><i class="fa-solid fa-graduation-cap"></i> ENMS Fundamentals (Half Day)</h3>
-                    <div class="meta">
-                        <span><i class="fa-solid fa-clock"></i> 4 hours</span>
-                        <span><i class="fa-solid fa-users"></i> Up to 15 participants</span>
-                        <span><i class="fa-solid fa-signal"></i> Beginner</span>
-                    </div>
-                    <p>
-                        Introduction to the ENMS platform, navigation, dashboard customization, and basic energy monitoring concepts. Perfect for new users and management staff.
-                    </p>
+                <p>The workshop was built on three guiding principles:</p>
+                <div class="highlight-box">
                     <ul>
-                        <li>Platform overview and user interface</li>
-                        <li>Understanding energy dashboards</li>
-                        <li>Creating custom views</li>
-                        <li>Basic reporting and data export</li>
+                        <li><strong>Human connection before information</strong> – people learn better when they feel relaxed and connected.</li>
+                        <li><strong>Active participation over passive listening</strong> – real understanding emerges through doing.</li>
+                        <li><strong>Integration of art, technology, and awareness</strong> – sustainability becomes tangible when it is seen, felt, and created together.</li>
                     </ul>
                 </div>
-
-                <div class="workshop-card">
-                    <h3><i class="fa-solid fa-chart-line"></i> Advanced Analytics & Optimization (Full Day)</h3>
-                    <div class="meta">
-                        <span><i class="fa-solid fa-clock"></i> 8 hours</span>
-                        <span><i class="fa-solid fa-users"></i> Up to 12 participants</span>
-                        <span><i class="fa-solid fa-signal"></i> Intermediate</span>
-                    </div>
-                    <p>
-                        Deep dive into data analysis, EnPI calculation, performance benchmarking, and energy optimization strategies.
-                    </p>
-                    <ul>
-                        <li>Energy Performance Indicators (EnPIs)</li>
-                        <li>Baseline establishment and normalization</li>
-                        <li>Statistical analysis and forecasting</li>
-                        <li>Identifying optimization opportunities</li>
-                        <li>Machine learning predictions</li>
-                    </ul>
-                </div>
-
-                <div class="workshop-card">
-                    <h3><i class="fa-solid fa-certificate"></i> ISO 50001 Implementation (2 Days)</h3>
-                    <div class="meta">
-                        <span><i class="fa-solid fa-clock"></i> 16 hours</span>
-                        <span><i class="fa-solid fa-users"></i> Up to 10 participants</span>
-                        <span><i class="fa-solid fa-signal"></i> Advanced</span>
-                    </div>
-                    <p>
-                        Comprehensive training on using the platform to meet ISO 50001 requirements, documentation, and certification preparation.
-                    </p>
-                    <ul>
-                        <li>ISO 50001 standard overview</li>
-                        <li>Energy review and planning</li>
-                        <li>Documentation requirements</li>
-                        <li>Internal audit preparation</li>
-                        <li>Management review processes</li>
-                    </ul>
-                </div>
-
-                <div class="workshop-card">
-                    <h3><i class="fa-solid fa-code"></i> Technical Integration Workshop (2 Days)</h3>
-                    <div class="meta">
-                        <span><i class="fa-solid fa-clock"></i> 16 hours</span>
-                        <span><i class="fa-solid fa-users"></i> Up to 8 participants</span>
-                        <span><i class="fa-solid fa-signal"></i> Technical</span>
-                    </div>
-                    <p>
-                        For IT staff and system integrators: IoT device integration, API usage, Node-RED workflow development, and system administration.
-                    </p>
-                    <ul>
-                        <li>MQTT and IoT protocols</li>
-                        <li>Device onboarding and configuration</li>
-                        <li>Node-RED flow development</li>
-                        <li>API integration and automation</li>
-                        <li>Database queries and custom dashboards</li>
-                    </ul>
-                </div>
-
-                <div class="workshop-card">
-                    <h3><i class="fa-solid fa-passport"></i> Digital Product Passport Masterclass (1 Day)</h3>
-                    <div class="meta">
-                        <span><i class="fa-solid fa-clock"></i> 8 hours</span>
-                        <span><i class="fa-solid fa-users"></i> Up to 12 participants</span>
-                        <span><i class="fa-solid fa-signal"></i> Intermediate</span>
-                    </div>
-                    <p>
-                        Learn to create, manage, and leverage digital product passports for sustainability reporting and compliance.
-                    </p>
-                    <ul>
-                        <li>DPP concepts and regulations</li>
-                        <li>Product lifecycle tracking</li>
-                        <li>Carbon footprint calculation</li>
-                        <li>ESG reporting</li>
-                        <li>Supply chain transparency</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>
-                    <span class="icon-badge"><i class="fa-solid fa-laptop-code"></i></span>
-                    Workshop Format
-                </h2>
                 <p>
-                    All workshops combine theoretical knowledge with hands-on practice:
+                    It is a modular format adaptable to different age groups, spaces, and durations. Each session contributes to a gradual transformation — from self-awareness to collective creation.
                 </p>
-                <ul>
-                    <li><strong>Interactive Presentations:</strong> Engaging content with real-world examples</li>
-                    <li><strong>Live Demonstrations:</strong> Platform features demonstrated in real-time</li>
-                    <li><strong>Practical Exercises:</strong> Participants work with actual platform instances</li>
-                    <li><strong>Q&A Sessions:</strong> Dedicated time for addressing specific questions</li>
-                    <li><strong>Case Studies:</strong> Learn from successful implementations</li>
-                    <li><strong>Resource Materials:</strong> Comprehensive documentation and guides provided</li>
-                </ul>
             </div>
 
             <div class="section">
                 <h2>
-                    <span class="icon-badge"><i class="fa-solid fa-building"></i></span>
-                    Delivery Options
+                    <span class="icon-badge"><i class="fa-solid fa-list-ol"></i></span>
+                    Workshop Structure
                 </h2>
-                <ul>
-                    <li><strong>On-Site:</strong> Training conducted at your facility</li>
-                    <li><strong>Virtual:</strong> Live online sessions with full interactivity</li>
-                    <li><strong>Hybrid:</strong> Combination of on-site and remote participants</li>
-                    <li><strong>Self-Paced:</strong> Recorded modules with certification exams</li>
-                </ul>
+
+                <div class="workshop-phase">
+                    <h3><span class="phase-number">1</span>Ice-Breaking and Trust Building (Creative Drama Session)</h3>
+                    <h3>Purpose:</h3>
+                    <p>To help participants get to know each other, build confidence, and open up communication.</p>
+                    
+                    <h3>How it works:</h3>
+                    <p>Facilitators start with playful drama games like 'Who Are You?', 'Do What I Say', or 'Say What I Say but Not What I Do'. These simple, fun tasks reduce tension and help the group become more responsive and cooperative.</p>
+                    
+                    <h3>Why it matters:</h3>
+                    <p>Energy and sustainability discussions require openness. This warm-up phase prepares participants to think creatively and engage without fear of being wrong.</p>
+                </div>
+
+                <div class="workshop-phase">
+                    <h3><span class="phase-number">2</span>Question Cards & Guided Discussion</h3>
+                    <h3>Purpose:</h3>
+                    <p>To awaken imagination and connect personal ideas to sustainability concepts.</p>
+                    
+                    <h3>How it works:</h3>
+                    <p>Each participant draws or selects a question card such as:</p>
+                    <ul>
+                        <li>If you were a plant, what type of plant would you be?</li>
+                        <li>If you were a hero, what would you do to save the Earth?</li>
+                        <li>If you were an innovator, what would you design with a 3D printer?</li>
+                    </ul>
+                    <p>Facilitators listen, then weave these answers into a guided conversation. They draw connections between participants' examples and the broader sustainability pillars — environmental, economic, social, and governance (ESG).</p>
+                    
+                    <h3>Facilitator's role:</h3>
+                    <p>Not to lecture, but to guide through curiosity. By echoing participants' ideas and connecting them to real sustainability scenarios, the facilitator gradually shifts the discussion from imagination toward tangible examples — resource use, renewable materials, circular economy, and efficient production methods.</p>
+                    <p><em>Supporting videos or visuals can be shown here to illustrate examples (QR codes provided in workshop materials).</em></p>
+                </div>
+
+                <div class="workshop-phase">
+                    <h3><span class="phase-number">3</span>Group Discussion & Prototyping Session</h3>
+                    <h3>Purpose:</h3>
+                    <p>To translate sustainability ideas into hands-on experience.</p>
+                    
+                    <h3>How it works:</h3>
+                    <p>Participants, with expert support, discuss how their creative ideas could become prototypes using 3D printing. They explore how design affects energy and material use, how the Human-Centric EnMS monitors this process, and how each print's data connects to a Digital Product Passport (DPP) card that displays energy and material consumption in real time.</p>
+                    
+                    <h3>Tip for replication:</h3>
+                    <p>Depending on time and available equipment, this session can be split into two parts — one focused on discussion and one on hands-on printing and monitoring.</p>
+                    
+                    <h3>Why it matters:</h3>
+                    <p>This step connects imagination to practice. It helps participants realize how design decisions, even at a small scale, affect energy and material use.</p>
+                </div>
+
+                <div class="workshop-phase">
+                    <h3><span class="phase-number">4</span>Hands-On Creation Session</h3>
+                    <p><em>Examples: 'Collaborative Canvas' in Hamburg, 'DIY Bioplastics Lab' at Ars Electronica</em></p>
+                    
+                    <h3>Purpose:</h3>
+                    <p>To conclude the workshop with a shared creative or scientific act that embodies the group's reflections.</p>
+                    
+                    <h3>How it works:</h3>
+                    <p>Participants co-create an artefact that expresses their collective understanding of sustainability. In Hamburg, they produced a large collaborative painting visualizing energy and material flows through color and form. In Ars Electronica, they made DIY bioplastic filaments from natural materials like corn or potatoes, symbolizing circular design.</p>
+                    <p><strong>Suggested title for replication:</strong> 'Hands-On Reflection: Creating Together for a Sustainable Future'</p>
+                    <p>Facilitators are free to adapt this session — the key is collective creation and reflection through making.</p>
+                </div>
+
+                <div class="workshop-phase">
+                    <h3><span class="phase-number">5</span>Reflection and Evaluation</h3>
+                    <h3>Purpose:</h3>
+                    <p>To let participants synthesize and express what they've experienced.</p>
+                    
+                    <h3>How it works:</h3>
+                    <p>This closing session uses simple but profound prompts to gather feedback and emotional resonance:</p>
+                    <ul>
+                        <li>Say one word that captures how you feel right now.</li>
+                        <li>What's the keyword that stayed with you from this workshop?</li>
+                        <li>Which word from LAUDS (Local, Accessible, Urban, Digital, Sustainable) best represents today's experience?</li>
+                    </ul>
+                    
+                    <h3>Why it matters:</h3>
+                    <p>Evaluation here is not a test — it's a celebration of learning and awareness. It closes the loop from imagination to understanding.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="table-title">Facilitator's Template Summary</h2>
+                <table class="facilitator-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Section</th>
+                            <th style="width: 25%;">Purpose</th>
+                            <th style="width: 30%;">Example Activities</th>
+                            <th style="width: 25%;">Key Guidance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Ice-Breaking</strong></td>
+                            <td>Build trust and comfort</td>
+                            <td>Creative drama, 'Do What I Say'</td>
+                            <td>Keep it light and fast-paced</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Question Cards</strong></td>
+                            <td>Trigger imagination and reflection</td>
+                            <td>If you were a plant...</td>
+                            <td>Use participants' answers to steer toward ESG topics</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Prototyping & EnMS Use</strong></td>
+                            <td>Link creativity with real data</td>
+                            <td>3D printing, DPP cards</td>
+                            <td>Split into two sessions if needed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hands-On Reflection</strong></td>
+                            <td>Create something symbolic</td>
+                            <td>Painting, bioplastics making</td>
+                            <td>Encourage collaboration, not perfection</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Evaluation</strong></td>
+                            <td>Reflect and internalize learning</td>
+                            <td>Keyword narration, LAUDS word selection</td>
+                            <td>Keep tone appreciative and open</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <div class="section">
                 <h2>
-                    <span class="icon-badge"><i class="fa-solid fa-award"></i></span>
-                    Certification
+                    <span class="icon-badge"><i class="fa-solid fa-user-graduate"></i></span>
+                    Final Note for Facilitators
                 </h2>
-                <p>
-                    Participants who complete workshops receive:
-                </p>
-                <ul>
-                    <li>Official completion certificate</li>
-                    <li>Digital badge for LinkedIn profile</li>
-                    <li>Access to exclusive user community</li>
-                    <li>6 months of post-training email support</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>
-                    <span class="icon-badge"><i class="fa-solid fa-phone"></i></span>
-                    Book a Workshop
-                </h2>
-                <p>
-                    Ready to upskill your team? Contact us to discuss your training needs and schedule a workshop tailored to your organization.
-                </p>
-                <a href="#" class="cta-button" onclick="alert('Contact: mohamad.jarad@aartimuhendislik.com'); return false;">
-                    <i class="fa-solid fa-envelope"></i> Request Workshop Information
-                </a>
+                <div class="highlight-box">
+                    <p>
+                        This workshop is not a rigid format — it's an adaptable framework where <strong>facilitation replaces instruction</strong> and <strong>experience replaces explanation</strong>. Whether you lead it in a FabLab, classroom, or community space, the goal remains the same: to let people see, feel, and create sustainability — together.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

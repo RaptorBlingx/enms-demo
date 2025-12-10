@@ -1,0 +1,79 @@
+Human-Centric Energy Workshop
+A Creative Journey Toward Understanding Sustainability
+The Human-Centric Energy Workshop was designed within the LAUDSEXP-01-43 project to transform the technical idea of energy management into a hands-on, human experience. It invites participants to discover how creativity, empathy, and technology can merge to shape a more sustainable future — from imagination to prototyping.
+
+Rather than teaching energy efficiency as a theory, the workshop turns it into a collective story. Through creative drama, guided discussions, 3D printing, and artistic co-creation, participants explore the emotional and practical sides of sustainability — and see their own role within it.
+Concept and Aims
+The workshop was built on three guiding principles:
+1. Human connection before information – people learn better when they feel relaxed and connected.
+2. Active participation over passive listening – real understanding emerges through doing.
+3. Integration of art, technology, and awareness – sustainability becomes tangible when it is seen, felt, and created together.
+
+It is a modular format adaptable to different age groups, spaces, and durations. Each session contributes to a gradual transformation — from self-awareness to collective creation.
+1. Ice-Breaking and Trust Building (Creative Drama Session)
+Purpose:
+To help participants get to know each other, build confidence, and open up communication.
+
+How it works:
+Facilitators start with playful drama games like 'Who Are You?', 'Do What I Say', or 'Say What I Say but Not What I Do'. These simple, fun tasks reduce tension and help the group become more responsive and cooperative.
+
+Why it matters:
+Energy and sustainability discussions require openness. This warm-up phase prepares participants to think creatively and engage without fear of being wrong.
+2. Question Cards & Guided Discussion
+Purpose:
+To awaken imagination and connect personal ideas to sustainability concepts.
+
+How it works:
+Each participant draws or selects a question card such as:
+- If you were a plant, what type of plant would you be?
+- If you were a hero, what would you do to save the Earth?
+- If you were an innovator, what would you design with a 3D printer?
+
+Facilitators listen, then weave these answers into a guided conversation. They draw connections between participants’ examples and the broader sustainability pillars — environmental, economic, social, and governance (ESG).
+
+Facilitator’s role:
+Not to lecture, but to guide through curiosity. By echoing participants’ ideas and connecting them to real sustainability scenarios, the facilitator gradually shifts the discussion from imagination toward tangible examples — resource use, renewable materials, circular economy, and efficient production methods.
+
+Supporting videos or visuals can be shown here to illustrate examples (QR codes provided in workshop materials).
+3. Group Discussion & Prototyping Session
+Purpose:
+To translate sustainability ideas into hands-on experience.
+
+How it works:
+Participants, with expert support, discuss how their creative ideas could become prototypes using 3D printing. They explore how design affects energy and material use, how the Human-Centric EnMS monitors this process, and how each print’s data connects to a Digital Product Passport (DPP) card that displays energy and material consumption in real time.
+
+Tip for replication:
+Depending on time and available equipment, this session can be split into two parts — one focused on discussion and one on hands-on printing and monitoring.
+
+Why it matters:
+This step connects imagination to practice. It helps participants realize how design decisions, even at a small scale, affect energy and material use.
+4. Hands-On Creation Session
+Examples: 'Collaborative Canvas' in Hamburg, 'DIY Bioplastics Lab' at Ars Electronica
+
+Purpose:
+To conclude the workshop with a shared creative or scientific act that embodies the group’s reflections.
+
+How it works:
+Participants co-create an artefact that expresses their collective understanding of sustainability. In Hamburg, they produced a large collaborative painting visualizing energy and material flows through color and form. In Ars Electronica, they made DIY bioplastic filaments from natural materials like corn or potatoes, symbolizing circular design.
+
+Suggested title for replication: 'Hands-On Reflection: Creating Together for a Sustainable Future'
+
+Facilitators are free to adapt this session — the key is collective creation and reflection through making.
+5. Reflection and Evaluation
+Purpose:
+To let participants synthesize and express what they’ve experienced.
+
+How it works:
+This closing session uses simple but profound prompts to gather feedback and emotional resonance:
+- Say one word that captures how you feel right now.
+- What’s the keyword that stayed with you from this workshop?
+- Which word from LAUDS (Local, Accessible, Urban, Digital, Sustainable) best represents today’s experience?
+
+Why it matters:
+Evaluation here is not a test — it’s a celebration of learning and awareness. It closes the loop from imagination to understanding.
+
+
+----
+
+Final Note for Facilitators:
+This workshop is not a rigid format — it’s an adaptable framework where facilitation replaces instruction and experience replaces explanation. Whether you lead it in a FabLab, classroom, or community space, the goal remains the same: to let people see, feel, and create sustainability — together.
