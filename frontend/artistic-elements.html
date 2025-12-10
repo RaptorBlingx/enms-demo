@@ -196,6 +196,135 @@
 
             <div class="section">
                 <h2>
+                    <span class="icon-badge"><i class="fa-solid fa-seedling"></i></span>
+                    Energy Plant Visualizations
+                </h2>
+                <p>
+                    One of the most unique features of the ENMS platform is the <strong>Energy Plant Visualization System</strong>—an artistic approach to making energy consumption data immediately understandable through natural growth metaphors.
+                </p>
+                <p>
+                    <strong>The Problem:</strong> Raw energy numbers (kWh, Watts) are abstract and difficult for non-technical audiences to contextualize. Is 0.5 kWh a lot or a little? How does today's consumption compare to yesterday?
+                </p>
+                <p>
+                    <strong>The Solution:</strong> The system uses <strong>plant growth and decline as a visual metaphor</strong> for cumulative energy consumption and environmental impact:
+                </p>
+                <ul>
+                    <li><strong>Growth Phase (Low Energy):</strong> As the printer consumes small amounts of energy, the plant grows from seed to healthy maturity—representing sustainable, efficient operation.</li>
+                    <li><strong>Decline Phase (High Energy):</strong> As energy consumption increases beyond optimal levels, the plant begins to wilt, brown, and eventually die—representing the negative environmental impact of excessive energy use.</li>
+                </ul>
+                <p>
+                    <strong>The Message:</strong> Operators can literally "see" when their energy consumption is "killing the planet" through the dying plant imagery. This creates powerful visual feedback to encourage energy efficiency.
+                </p>
+            </div>
+
+            <div class="section">
+                <h2>
+                    <span class="icon-badge"><i class="fa-solid fa-leaf"></i></span>
+                    Plant Type Collection
+                </h2>
+                <p>
+                    The system includes <strong>four distinct plant types</strong>, each with its own unique artistic style and number of growth stages. Each plant type is assigned per printer to create visual diversity across the fleet.
+                </p>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: #2d3748; margin-bottom: 1rem; font-size: 1.3rem;">
+                        <i class="fa-solid fa-1" style="color: #c2185b;"></i> Potato (Generic Plant)
+                    </h3>
+                    <p style="margin-bottom: 1rem;"><strong>Stages:</strong> 21 (most granular progression)<br>
+                    <strong>Location:</strong> /artistic-resources/plants/potato/</p>
+                    <img src="../docs/genirc-collage.png" alt="Potato Plant Growth Stages" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: #2d3748; margin-bottom: 1rem; font-size: 1.3rem;">
+                        <i class="fa-solid fa-2" style="color: #c2185b;"></i> Corn (Maize)
+                    </h3>
+                    <p style="margin-bottom: 1rem;"><strong>Stages:</strong> 8<br>
+                    <strong>Location:</strong> /artistic-resources/plants/corn/</p>
+                    <img src="../docs/corn-collage.png" alt="Corn Plant Growth Stages" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: #2d3748; margin-bottom: 1rem; font-size: 1.3rem;">
+                        <i class="fa-solid fa-3" style="color: #c2185b;"></i> Corn 2
+                    </h3>
+                    <p style="margin-bottom: 1rem;"><strong>Stages:</strong> 12<br>
+                    <strong>Location:</strong> /artistic-resources/plants/corn_2/</p>
+                    <img src="../docs/potato-collage.png" alt="Corn 2 Plant Growth Stages" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: #2d3748; margin-bottom: 1rem; font-size: 1.3rem;">
+                        <i class="fa-solid fa-4" style="color: #c2185b;"></i> Corn 3
+                    </h3>
+                    <p style="margin-bottom: 1rem;"><strong>Stages:</strong> 7<br>
+                    <strong>Location:</strong> /artistic-resources/plants/corn_3/</p>
+                    <img src="../docs/sunflower-collage.png" alt="Corn 3 Plant Growth Stages" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>
+                    <span class="icon-badge"><i class="fa-solid fa-gears"></i></span>
+                    Energy-to-Stage Mapping
+                </h2>
+                <p>
+                    Each printer has a cumulative energy counter that tracks total kWh consumed over its lifetime. This energy value is mapped to a <strong>growth stage</strong> between 1 and 21:
+                </p>
+                <ul>
+                    <li><strong>Stage 1 (0.000 - 0.003 kWh):</strong> Seed / bare soil</li>
+                    <li><strong>Stage 2 (0.003 - 0.006 kWh):</strong> Sprout emerging</li>
+                    <li><strong>Stages 3-7 (0.006 - 0.010 kWh):</strong> Seedling with first leaves</li>
+                    <li><strong>Stages 8-11 (0.010 - 0.100 kWh):</strong> Juvenile plant, growing height</li>
+                    <li><strong>Stages 12-16 (0.100 - 1.000 kWh):</strong> Mature plant, full foliage (peak health)</li>
+                    <li><strong>Stages 17-21 (1.000 - 3.000+ kWh):</strong> <strong style="color: #c2185b;">Plant wilting and dying</strong> (high energy consumption)</li>
+                </ul>
+                <p style="margin-top: 1rem;">
+                    <strong>Important:</strong> The later stages (17-21) deliberately show the plant <strong>wilting, browning, and eventually dying</strong>. This symbolizes excessive energy consumption and its negative environmental impact. The metaphor: just as over-consuming resources kills a plant, high energy usage harms the environment.
+                </p>
+            </div>
+
+            <div class="section">
+                <h2>
+                    <span class="icon-badge"><i class="fa-solid fa-bullseye"></i></span>
+                    Key Design Principles
+                </h2>
+                <ul>
+                    <li><strong>Intuitive:</strong> Everyone understands plant growth AND death—no technical knowledge required</li>
+                    <li><strong>Gamified:</strong> Creates engagement and emotional connection to energy efficiency ("keep the plant healthy!")</li>
+                    <li><strong>Powerful Messaging:</strong> Wilting/dying plants provide visceral reminder of environmental consequences</li>
+                    <li><strong>Sustainable Messaging:</strong> Reinforces that excessive energy consumption has environmental impact</li>
+                    <li><strong>Scalable:</strong> Plant imagery works across cultures and languages</li>
+                    <li><strong>Honest:</strong> Doesn't sugarcoat high consumption—shows the real impact</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>
+                    <span class="icon-badge"><i class="fa-solid fa-location-dot"></i></span>
+                    Where You'll See Energy Plants
+                </h2>
+                <div class="gallery">
+                    <div class="gallery-item">
+                        <i class="fa-solid fa-id-card"></i>
+                        <h3>DPP Card Front</h3>
+                        <p>Large, prominent plant image centered on the card. Updates in real-time as printer consumes energy during active jobs.</p>
+                    </div>
+                    <div class="gallery-item">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <h3>PDF Reports</h3>
+                        <p>Final plant stage embedded as a "visual certificate" representing total energy consumed for that specific print job.</p>
+                    </div>
+                    <div class="gallery-item">
+                        <i class="fa-solid fa-chart-bar"></i>
+                        <h3>Historical Displays</h3>
+                        <p>Fleet comparison views show plant stages side-by-side to identify printers with highest cumulative energy usage.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>
                     <span class="icon-badge"><i class="fa-solid fa-hands-holding-heart"></i></span>
                     Human-Centered Approach
                 </h2>
@@ -203,7 +332,10 @@
                     Beyond pixels and code, our artistic vision centers on the <strong>human experience</strong>. We believe that beautifully designed tools inspire engagement, foster understanding, and ultimately drive meaningful action toward energy efficiency and sustainability goals.
                 </p>
                 <p>
-                    Every gradient, every transition, every carefully chosen color serves a purpose: to make energy management not just functional, but delightful.
+                    The Energy Plant visualizations serve multiple purposes beyond aesthetics: <strong>sustainability awareness</strong> (making abstract energy consumption tangible), <strong>client communication</strong> (visually impressive and memorable), and <strong>team engagement</strong> (gamification creates emotional investment).
+                </p>
+                <p>
+                    Every gradient, every transition, every carefully chosen color—and every plant growth stage—serves a purpose: to make energy management not just functional, but delightful.
                 </p>
             </div>
         </div>
