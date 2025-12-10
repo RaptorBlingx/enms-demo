@@ -153,6 +153,44 @@
             font-size: 1.2rem;
             color: #667eea;
         }
+        
+        .lauds-acknowledgment {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            border-radius: 16px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            text-align: center;
+        }
+        
+        .lauds-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .lauds-logo {
+            height: 70px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        
+        .lauds-logo:hover {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
+        
+        .lauds-text {
+            font-size: 0.95rem;
+            color: #4a5568;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -339,6 +377,17 @@
                     <li><strong>Digital Product Passport (DPP):</strong> Product-specific sustainability documentation</li>
                     <li><strong>Node-RED:</strong> Configure IoT workflows and data pipelines</li>
                 </ul>
+            </div>
+            
+            <div class="lauds-acknowledgment">
+                <div class="lauds-logos">
+                    <img src="files/lauds-logo_lauds-orangebox-logo-removebg-preview.png" alt="LAUDS Logo" class="lauds-logo">
+                    <img src="files/eu_flag_black_white_high.jpg" alt="European Union Flag" class="lauds-logo" style="height: 60px;">
+                    <img src="files/APlus_Engineering-removebg-preview.png" alt="A+ Engineering" class="lauds-logo">
+                </div>
+                <p class="lauds-text">
+                    <strong>LAUDS</strong> (Local Accessible Urban Digital Sustainable Factories) is a Horizon Europe research and innovation action - Co-funded by the European Union, 2024-2026, Grant Agreement 101135986
+                </p>
             </div>
         </div>
     </div>

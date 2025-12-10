@@ -892,6 +892,42 @@
             font-size: 0.875rem;
         }
         
+        .lauds-acknowledgment {
+            margin-top: 2.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .lauds-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .lauds-logo {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        
+        .lauds-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .lauds-text {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            text-align: center;
+            margin: 0;
+        }
+        
         @media (max-width: 1024px) {
             .feature-grid-welcome {
                 grid-template-columns: repeat(2, 1fr);
@@ -1012,6 +1048,17 @@
                 
                 <div class="footer-welcome">
                     <p>🌱 Sustainable Manufacturing • ⚙️ Industry 4.0 Ready • 🔒 Enterprise-Grade Security</p>
+                </div>
+                
+                <div class="lauds-acknowledgment">
+                    <div class="lauds-logos">
+                        <img src="files/lauds-logo_lauds-orangebox-logo-removebg-preview.png" alt="LAUDS Logo" class="lauds-logo">
+                        <img src="files/eu_flag_black_white_high.jpg" alt="EU Flag" class="lauds-logo" style="height: 50px;">
+                        <img src="files/APlus_Engineering-removebg-preview.png" alt="A+ Engineering" class="lauds-logo">
+                    </div>
+                    <p class="lauds-text">
+                        LAUDS Local Accessible Urban Digital Sustainable Factories is a Horizon Europe research and innovation action - Co-funded by the European Union, 2024-2026, GA 101135986
+                    </p>
                 </div>
             </div>
         </div>
